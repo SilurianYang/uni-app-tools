@@ -1,7 +1,8 @@
 <template>
 	<view class="content">
 		<view>
-        </view>
+			<button type="primary" @click="testReq">测试ajax</button>
+		</view>
 	</view>
 </template>
 
@@ -16,23 +17,30 @@
 
 		},
 		methods: {
-
+			async testReq() {
+				try {
+					const res = await this.$req.ajax({
+						path: "example/query",
+						title:"正在加载",
+						data: {
+							token: '000-000-000-000-player125',
+							tpName: 'TP427613'
+						},
+						abortFun: bt => {
+						},
+						finshFun: finsh => {
+						}
+					}, {
+						name: 66,
+						age: 99
+					})
+				} catch (e) {
+					console.log(e)
+				}
+			}
 		}
 	}
 </script>
 
 <style>
-	.content {
-		text-align: center;
-		height: 400upx;
-	}
-    .logo{
-        height: 200upx;
-        width: 200upx;
-        margin-top: 200upx;
-    }
-	.title {
-		font-size: 36upx;
-		color: #8f8f94;
-	}
 </style>
