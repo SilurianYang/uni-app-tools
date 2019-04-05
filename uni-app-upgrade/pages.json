@@ -1,0 +1,26 @@
+{
+	"pages": [ //pages数组中第一项表示应用启动页，参考：https://uniapp.dcloud.io/collocation/pages
+	// #ifdef APP-PLUS
+			{
+		"path": "pages/update/update",
+		"style": {
+			"scrollIndicator": "none",
+			"app-plus": {
+				"titleNView": false,
+				"bounce": "none"
+			}
+		}
+	},
+	// #endif
+        {
+            "path" : "pages/login/login",
+            "style" : {}
+        }
+    ],
+	"globalStyle": {
+		"navigationBarTextStyle": "white",
+		"navigationBarTitleText": "uni-app",
+		"navigationBarBackgroundColor": "#FF0000",
+		"backgroundColor": "#FF0000"
+	}
+}

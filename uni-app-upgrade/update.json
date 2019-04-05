@@ -1,0 +1,18 @@
+{
+	"version":"1.0.0",		//当前服务器上的版本 manifest.json里面的版本号
+	"download":"http://192.168.0.23/H5EF3C469.wgt",			//必填 热更下载地址 string格式只能唯一
+	"new_download":["http://192.168.0.23/H5EF3C469.wgt","http://192.168.0.23/H5EF3C469.wgt"],  //非必填 Array格式 循环下载，挨着尝试（直到成功结束），尝试完成。当前此项存在的时候忽略download 属性
+	"size": 706469,		//当前安装包文件大小，用于对比当前下载的包是否完整
+	"android":{	
+		"min_hotupdate_ver":"1.0.0",   		//最小支持的热更版本，如果此选项和version选项相同值的情况下，会采取浏览器打开的方式下载。整包更新。
+		"install":"",		//必填 整包下载地址 string格式只能唯一
+		"new_install":["http://192.168.0.23/H5EF3C469.apk","http://192.168.0.23/H5EF3C469.apk","http://192.168.0.23/H5EF3C469.apk"]	//非必填 Array格式 随机选择一个下载地址打开浏览器下载。当前此项存在的时候忽略install 属性
+	},
+	"iphone":{
+		"min_hotupdate_ver":"1.0.0",	//最小支持的热更版本，如果此选项和version选项相同值的情况下，会采取浏览器打开的方式下载。整包更新。
+		"install":"",	//必填 整包下载地址 string格式只能唯一
+		"new_install":["http://192.168.0.23/H5EF3C469.apk","http://192.168.0.23/H5EF3C469.apk","http://192.168.0.23/H5EF3C469.apk"]	//非必填 Array格式 随机选择一个下载地址打开浏览器下载。当前此项存在的时候忽略install 属性
+	}
+
+}
+
