@@ -27,7 +27,7 @@ class Request {
 		title = false, //请求头部 默认为false不显示, 传入字符串则显示 推荐7个字内
 		header = this.defaultReq.header, //请求header 默认为"application/x-www-form-urlencoded"
 		data = {}, //请求数据，默认为空对象
-		method = this.defaultReq.type, //请求类型 默认为'GET'
+		type = this.defaultReq.type, //请求类型 默认为'GET'
 		dataType = this.defaultReq.dataType, //返回数据类型，默认为json。会对返回数据做一个JSON.parse
 		responseType = this.defaultReq.responseType, //设置响应的数据类型默认为'text'
 		finshFun = _f => {},
@@ -51,7 +51,7 @@ class Request {
 			}
 			const requestTask = uni.request({
 				url: this.defaultReq.url + path,
-				method,
+				method:type,
 				dataType,
 				responseType,
 				data,
@@ -64,8 +64,8 @@ class Request {
 						extra
 					}, _res);
 					if (statusCode == 200) {
-						let testRes = this.defaultReq.testFun(_res, statusCode) || true;
-						if (testRes) {
+						let testRes = this.defaultReq.testFun(_res, statusCode);
+						if (testRes==undefined||testRes) {
 							return resolve(callData);
 						}
 					}
