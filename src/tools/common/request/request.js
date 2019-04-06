@@ -2,22 +2,63 @@
  * 2019年4月5日12:44:58
  * 简单封装uni-app请求，下载，上传。
  */
+let _baseuUrl = '';
+let _defaultReq = {
+	isreq: true, //是否已经打开ajax，默认为true
+	url: '', //独立的url ajax
+	baseData: {}, //ajax基本参数
+	header: {
+		'content-type': 'application/x-www-form-urlencoded'
+	},
+	type: 'GET',
+	dataType: 'json',
+	responseType: 'text',
+	testFun: (_data, _status) => {
+		return true
+	}
+}
+let _defaultUp = {
+	url: '', //独立的url 
+	baseData: {},
+	header: {
+		'content-type': 'multipart/form-data;'
+	},
+}
+
+	/**
+	 * 代理控制 2019年4月6日16:06:05
+	 */
+let ProxyControll=(obj, gObj) =>{
+		for (let key in obj) {
+			let itemval=obj[key];
+			Object.defineProperty(obj, key, {
+				enumerable: true,
+				get: function() {
+					return this[`HHYANG_${key}`]
+				},
+				set: function(newvalue) {
+					this[`HHYANG_${key}`]=newvalue;
+				}
+
+			})
+			obj[key]=itemval;
+		}
+	}
+	ProxyControll(_defaultReq);
+	ProxyControll(_defaultUp);
+
 class Request {
 	constructor(arg) {
-		this.defaultReq = {
-			isreq: true, //是否已经打开ajax，默认为true
-			baseData: {}, //ajax基本参数
-			url: '', //请求默认前面部分
-			header: {
-				'content-type': 'application/x-www-form-urlencoded'
-			},
-			type: 'GET',
-			dataType: 'json',
-			responseType: 'text',
-			testFun: (_data, _status) => {
-				return true
-			}
-		}
+		this.defaultReq = _defaultReq;
+		this.defaultUp = _defaultUp;
+	}
+	set baseuUrl(value) {
+		_baseuUrl = value;
+		_defaultReq.url = value;
+		_defaultUp.url = value;
+	}
+	get baseuUrl() {
+		return _baseuUrl;
 	}
 	/**
 	 * 基本ajax请求
@@ -51,7 +92,7 @@ class Request {
 			}
 			const requestTask = uni.request({
 				url: this.defaultReq.url + path,
-				method:type,
+				method: type,
 				dataType,
 				responseType,
 				data,
@@ -65,7 +106,7 @@ class Request {
 					}, _res);
 					if (statusCode == 200) {
 						let testRes = this.defaultReq.testFun(_res, statusCode);
-						if (testRes==undefined||testRes) {
+						if (testRes == undefined || testRes) {
 							return resolve(callData);
 						}
 					}
@@ -86,6 +127,54 @@ class Request {
 			abortFun(requestTask);
 		})
 	}
+	/**
+	 * 2019年4月6日12:05:55 
+	 * 封装上传文件功能
+	 */
+	ajaxFile({
+		path = '',
+		title = false,
+		header = this.defaultUp.header,
+		filePath = '',
+		fileName = '',
+		extra = {},
+		reload = bt => {},
+		_isFirst = true,
+		_autoClose = true
+	} = {}) {
+		return new Promise((resolve, reject) => {
+			if (title && _isFirst) { //显示请求提示
+				uni.showLoading({
+					title,
+					mask: true,
+				});
+			}
+			const uploadTask = uni.uploadFile({
+				url: this.defaultUp.url + path,
+				filePath,
+				name: fileName,
+				header,
+				formData: extra,
+				complete: ({
+					statusCode = 0,
+					...finsh
+				} = {}) => {
+					if (title && _autoClose) {
+						uni.hideLoading();
+					}
+					if (statusCode == 200) {
+						return resolve(finsh);
+					}
+					return reject(finsh);
+				}
+			});
+			reload(uploadTask);
+		})
+	}
+	test() {
+		console.log(222)
+	}
 }
 
-export default new Request();
+export const req= new Request();
+export const RQ= Request;
