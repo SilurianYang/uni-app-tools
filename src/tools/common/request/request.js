@@ -3,6 +3,7 @@
  * 简单封装uni-app请求，下载，上传。
  */
 let _baseuUrl = '';
+let _isUpOpenDown=false;		//是否在上传js中引入下载的js
 let _defaultReq = {
 	isreq: true, //是否已经打开ajax，默认为true
 	url: '', //独立的url ajax
@@ -28,7 +29,7 @@ let _defaultUp = {
 	/**
 	 * 代理控制 2019年4月6日16:06:05
 	 */
-let ProxyControll=(obj, gObj) =>{
+let ProxyControll=(obj,callback=(key,val)=>{}) =>{
 		for (let key in obj) {
 			let itemval=obj[key];
 			Object.defineProperty(obj, key, {
@@ -38,6 +39,7 @@ let ProxyControll=(obj, gObj) =>{
 				},
 				set: function(newvalue) {
 					this[`HHYANG_${key}`]=newvalue;
+					callback(key,newvalue);
 				}
 
 			})
@@ -49,6 +51,7 @@ let ProxyControll=(obj, gObj) =>{
 
 class Request {
 	constructor(arg) {
+		this.platform = this.platformChunk();
 		this.defaultReq = _defaultReq;
 		this.defaultUp = _defaultUp;
 	}
@@ -59,6 +62,12 @@ class Request {
 	}
 	get baseuUrl() {
 		return _baseuUrl;
+	}
+	set isUpOpenDown(value){
+		_isUpOpenDown=value;
+	}
+	get isUpOpenDown(){
+		return _isUpOpenDown;
 	}
 	/**
 	 * 基本ajax请求
@@ -170,6 +179,21 @@ class Request {
 			});
 			reload(uploadTask);
 		})
+	}
+	/**
+	 * 设置代理
+	 */
+	proxy(obj,callback){
+		ProxyControll(obj,callback);
+	}
+	/**
+	 * 运行环境判断
+	 */
+	platformChunk() {
+		if (typeof plus == 'undefined') {
+			return 1;
+		}
+		return 0;
 	}
 	test() {
 		console.log(222)

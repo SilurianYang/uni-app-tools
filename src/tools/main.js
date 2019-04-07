@@ -5,6 +5,7 @@ Vue.config.productionTip = false
 
 import {req} from './common/request/request.js';
 import  ToolsUp from './common/request/request-upFiles.js';
+import  ToolsdDown from './common/request/request-downFiles.js';
 
 req.baseuUrl = 'https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
 req.defaultReq.type = "POST";

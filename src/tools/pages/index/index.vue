@@ -16,17 +16,29 @@
 		},
 		onLoad() {
 			this.$ToolsUp.test();
+			setTimeout(async ()=>{
+				this.$ToolsUp.defaultFile.upOpenDown=true;
+			const res=	await this.$ToolsUp.upnNetRes({
+					netPath:['http://192.168.137.1:8080/static/a.txt','http://192.168.137.1:8080/static/a.txt'],
+					upPath:'example/upload',
+					abort:(bt,finsh)=>{
+					},
+					title:'正在上传',
+					files:['image']
+				});
+				console.log(res)
+			},3000)
 		},
 		methods: {
 		async	testUp() {
 			const res=await	this.$ToolsUp.selectFiles({
 					type:0,
 					maximum:3,
-// 					upload:{
-// 						path:'example/upload',
-// 						files:['image','image','image'],
-// 						isUp:true
-// 					}
+					upload:{
+						path:'example/upload',
+						files:['image','image','image'],
+						isUp:true
+					}
 				})
 				console.log(JSON.stringify(res))
 
