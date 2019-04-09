@@ -180,6 +180,30 @@ class Request {
 			reload(uploadTask);
 		})
 	}
+		/**
+	 * 内部下载文件，仅内部调用
+	 */
+	downFiles(extra) {
+		return new Promise((resolve, reject) => {
+			const downloadTask = uni.downloadFile({
+				...extra,
+				complete: ({
+					statusCode = 0,
+					...finsh
+				} = {}) => {
+					extra.abort(downloadTask, Object.assign({}, {
+						statusCode,
+						...finsh
+					}));
+					if (statusCode === 200) {
+						return resolve(finsh);
+					}
+					return reject(finsh)
+				},
+			})
+			extra.abort(downloadTask);
+		})
+	}
 	/**
 	 * 设置代理
 	 */
