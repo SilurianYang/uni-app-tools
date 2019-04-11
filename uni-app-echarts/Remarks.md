@@ -1,1 +1,1 @@
-# request.js 使用说明
+# echarts 小程序版和App版使用说明
