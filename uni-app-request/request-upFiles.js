@@ -37,7 +37,7 @@ class UpFiles extends RQ {
 			try {
 				if (upload.isUp && upload.title) { //需要上传到服务器，然后再返回
 					uni.showLoading({
-						title: '正在上传',
+						title,
 						mask: true,
 					});
 					for (let i = 0; i < res.length; i++) {
@@ -50,6 +50,7 @@ class UpFiles extends RQ {
 							title: false,
 							filePath: res[i],
 							fileName,
+							extra:upload.extra
 						});
 					}
 					if (upload.title) {
@@ -89,7 +90,8 @@ class UpFiles extends RQ {
 					path: upPath,
 					files,
 					isUp: true,
-					title
+					title,
+					extra
 				}, res.FilePath);
 				resolve(uploadRes);
 			} catch (e) {
@@ -111,7 +113,8 @@ class UpFiles extends RQ {
 			path: '',
 			files: [],
 			isUp: false,
-			title: false
+			title: false,
+			extra:{}
 		},
 		...extra
 	} = {}) {
