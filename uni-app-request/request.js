@@ -3,7 +3,7 @@
  * 简单封装uni-app请求，下载，上传。
  */
 let _baseuUrl = '';
-let _isUpOpenDown=false;		//是否在上传js中引入下载的js
+let _isUpOpenDown = false; //是否在上传js中引入下载的js
 let _defaultReq = {
 	isreq: true, //是否已经打开ajax，默认为true
 	url: '', //独立的url ajax
@@ -26,28 +26,28 @@ let _defaultUp = {
 	},
 }
 
-	/**
-	 * 代理控制 2019年4月6日16:06:05
-	 */
-let ProxyControll=(obj,callback=(key,val)=>{}) =>{
-		for (let key in obj) {
-			let itemval=obj[key];
-			Object.defineProperty(obj, key, {
-				enumerable: true,
-				get: function() {
-					return this[`HHYANG_${key}`]
-				},
-				set: function(newvalue) {
-					this[`HHYANG_${key}`]=newvalue;
-					callback(key,newvalue);
-				}
+/**
+ * 代理控制 2019年4月6日16:06:05
+ */
+let ProxyControll = (obj, callback = (key, val) => {}) => {
+	for (let key in obj) {
+		let itemval = obj[key];
+		Object.defineProperty(obj, key, {
+			enumerable: true,
+			get: function() {
+				return this[`HHYANG_${key}`]
+			},
+			set: function(newvalue) {
+				this[`HHYANG_${key}`] = newvalue;
+				callback(key, newvalue);
+			}
 
-			})
-			obj[key]=itemval;
-		}
+		})
+		obj[key] = itemval;
 	}
-	ProxyControll(_defaultReq);
-	ProxyControll(_defaultUp);
+}
+ProxyControll(_defaultReq);
+ProxyControll(_defaultUp);
 
 class Request {
 	constructor(arg) {
@@ -63,10 +63,10 @@ class Request {
 	get baseuUrl() {
 		return _baseuUrl;
 	}
-	set isUpOpenDown(value){
-		_isUpOpenDown=value;
+	set isUpOpenDown(value) {
+		_isUpOpenDown = value;
 	}
-	get isUpOpenDown(){
+	get isUpOpenDown() {
 		return _isUpOpenDown;
 	}
 	/**
@@ -180,7 +180,7 @@ class Request {
 			reload(uploadTask);
 		})
 	}
-		/**
+	/**
 	 * 内部下载文件，仅内部调用
 	 */
 	downFiles(extra) {
@@ -207,8 +207,8 @@ class Request {
 	/**
 	 * 设置代理
 	 */
-	proxy(obj,callback){
-		ProxyControll(obj,callback);
+	proxy(obj, callback) {
+		ProxyControll(obj, callback);
 	}
 	/**
 	 * 运行环境判断
@@ -219,10 +219,7 @@ class Request {
 		}
 		return 0;
 	}
-	test() {
-		console.log(222)
-	}
 }
 
-export const req= new Request();
-export const RQ= Request;
+export const req = new Request();
+export const RQ = Request;

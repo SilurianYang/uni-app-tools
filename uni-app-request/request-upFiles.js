@@ -166,8 +166,5 @@ class UpFiles extends RQ {
 			});
 		})
 	}
-	test() {
-		console.log(666)
-	}
 }
 export default new UpFiles();
