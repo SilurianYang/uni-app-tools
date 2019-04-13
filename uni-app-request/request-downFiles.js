@@ -19,8 +19,8 @@ class DonwFiles extends RQ {
 	} = {}) {
 		return new Promise(async (resolve, reject) => {
 			let obj = {
-				tempFileInfo:[],
-				FilePath:[]
+				tempFileInfo: [],
+				FilePath: []
 			};
 			try {
 				if (title) {
@@ -40,7 +40,7 @@ class DonwFiles extends RQ {
 					obj.FilePath.push(res.tempFilePath)
 					obj.tempFileInfo.push({
 						url,
-						filePath:res.tempFilePath
+						filePath: res.tempFilePath
 					});
 				}
 				resolve(obj);
