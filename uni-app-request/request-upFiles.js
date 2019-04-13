@@ -35,7 +35,7 @@ class UpFiles extends RQ {
 	startUpFiles(upload, res) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				if (upload.isUp&&upload.title) { //需要上传到服务器，然后再返回
+				if (upload.isUp && upload.title) { //需要上传到服务器，然后再返回
 					uni.showLoading({
 						title: '正在上传',
 						mask: true,
@@ -52,7 +52,7 @@ class UpFiles extends RQ {
 							fileName,
 						});
 					}
-					if(upload.title){
+					if (upload.title) {
 						uni.hideLoading();
 					}
 					resolve({
@@ -72,15 +72,15 @@ class UpFiles extends RQ {
 	 */
 	upnNetRes({
 		netPath = '',
-		upPath= '',
-		files= [],
+		upPath = '',
+		files = [],
 		abort = (bt, finsh) => {},
 		title = false,
 		...extra
 	} = {}) {
 		return new Promise(async (resolve, reject) => {
 			const res = await _down.startDownFiles({
-				path:netPath,
+				path: netPath,
 				abort,
 				...extra
 			});
@@ -111,7 +111,7 @@ class UpFiles extends RQ {
 			path: '',
 			files: [],
 			isUp: false,
-			title:false
+			title: false
 		},
 		...extra
 	} = {}) {
