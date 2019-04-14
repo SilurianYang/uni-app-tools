@@ -32,27 +32,37 @@ class UpFiles extends RQ {
 	 * 开始上传文件
 	 * 2019年4月7日14:55:15
 	 */
-	startUpFiles(upload, res) {
+	startUpFiles({
+		path = '',
+		files = [],
+		isUp = true,
+		title = false,
+		showProgress=false,
+		extra = {}
+	} = {}, res) {
 		return new Promise(async (resolve, reject) => {
 			try {
-				if (upload.isUp&&upload.title) { //需要上传到服务器，然后再返回
-					uni.showLoading({
-						title: '正在上传',
-						mask: true,
-					});
+				if (isUp) { //需要上传到服务器，然后再返回
+					if (title) {
+						uni.showLoading({
+							title,
+							mask: true,
+						});
+					}
 					for (let i = 0; i < res.length; i++) {
-						if (upload.showProgress) {
+						if (showProgress) {
 							title = `${(i+1)}/${res.length}`
 						}
-						let fileName = upload.files[i] != undefined ? upload.files[i] : upload.files[upload.files.length - 1];
+						let fileName = files[i] != undefined ? files[i] : files[files.length - 1];
 						let upres = await this.ajaxFile({
-							path: upload.path,
+							path: path,
 							title: false,
 							filePath: res[i],
 							fileName,
+							extra: extra
 						});
 					}
-					if(upload.title){
+					if (title) {
 						uni.hideLoading();
 					}
 					resolve({
@@ -72,15 +82,15 @@ class UpFiles extends RQ {
 	 */
 	upnNetRes({
 		netPath = '',
-		upPath= '',
-		files= [],
+		upPath = '',
+		files = [],
 		abort = (bt, finsh) => {},
 		title = false,
 		...extra
 	} = {}) {
 		return new Promise(async (resolve, reject) => {
 			const res = await _down.startDownFiles({
-				path:netPath,
+				path: netPath,
 				abort,
 				...extra
 			});
@@ -89,7 +99,8 @@ class UpFiles extends RQ {
 					path: upPath,
 					files,
 					isUp: true,
-					title
+					title,
+					extra
 				}, res.FilePath);
 				resolve(uploadRes);
 			} catch (e) {
@@ -111,7 +122,8 @@ class UpFiles extends RQ {
 			path: '',
 			files: [],
 			isUp: false,
-			title:false
+			title: false,
+			extra: {}
 		},
 		...extra
 	} = {}) {
@@ -165,9 +177,6 @@ class UpFiles extends RQ {
 				...queryInfo
 			});
 		})
-	}
-	test() {
-		console.log(666)
 	}
 }
 export default new UpFiles();

@@ -9,30 +9,6 @@ class DonwFiles extends RQ {
 		super(arg);
 	}
 	/**
-	 * 内部下载文件，仅内部调用
-	 */
-	_downFiles(extra) {
-		return new Promise((resolve, reject) => {
-			const downloadTask = uni.downloadFile({
-				...extra,
-				complete: ({
-					statusCode = 0,
-					...finsh
-				} = {}) => {
-					extra.abort(downloadTask, Object.assign({}, {
-						statusCode,
-						...finsh
-					}));
-					if (statusCode === 200) {
-						return resolve(finsh);
-					}
-					return reject(finsh)
-				},
-			})
-			extra.abort(downloadTask);
-		})
-	}
-	/**
 	 * 下载文件
 	 */
 	startDownFiles({
@@ -43,8 +19,8 @@ class DonwFiles extends RQ {
 	} = {}) {
 		return new Promise(async (resolve, reject) => {
 			let obj = {
-				tempFileInfo:[],
-				FilePath:[]
+				tempFileInfo: [],
+				FilePath: []
 			};
 			try {
 				if (title) {
@@ -56,7 +32,7 @@ class DonwFiles extends RQ {
 				path = path.toString().split(',');
 				for (let i = 0; i < path.length; i++) {
 					let url = path[i];
-					let res = await this._downFiles({
+					let res = await this.downFiles({
 						url,
 						abort,
 						...extra
@@ -64,7 +40,7 @@ class DonwFiles extends RQ {
 					obj.FilePath.push(res.tempFilePath)
 					obj.tempFileInfo.push({
 						url,
-						filePath:res.tempFilePath
+						filePath: res.tempFilePath
 					});
 				}
 				resolve(obj);
