@@ -115,5 +115,48 @@ class Expand {
 			}
 		})
 	}
+	/**
+	 * 文件转换为base64
+	 * 仅App支持
+	 */
+	turnFileBase64({
+		filePath = '',
+		title = false
+	} = {}) {
+		return new Promise((resolve, reject) => {
+			if (filePath === '') {
+				return reject('文件路径不能为空,可以是临时路径也可以是永久路径');
+			}
+			if (title) {
+				uni.showLoading({
+					title,
+					mask: true
+				})
+			}
+			plus.io.resolveLocalFileSystemURL(filePath, entry => {
+				entry.file(file => {
+					let reader = new plus.io.FileReader();
+					reader.onload = e => {
+						if (title) {
+							uni.hideLoading();
+						}
+						resolve(e.target.result);
+					};
+					reader.onerror = err => {
+						if (title) {
+							uni.hideLoading();
+						}
+						reject(err)
+					};
+					reader.readAsDataURL(file, 'UTF-8');
+				}, err => {
+					if (title) {
+						uni.hideLoading();
+					}
+					reject(err)
+				})
+			})
+		})
+	}
 }
 export default Expand;
