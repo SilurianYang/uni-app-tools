@@ -14,6 +14,9 @@
 				title: 'Hello'
 			}
 		},
+		onPullDownRefresh() {
+			uni.stopPullDownRefresh();
+		},
 		onLoad() {
 // 			setTimeout(async ()=>{
 // 				this.$ToolsUp.defaultFile.upOpenDown=true;
