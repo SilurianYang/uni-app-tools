@@ -54,6 +54,7 @@ async function TestSocket() {
 			},
 			onMsg: msg => {}
 		});
+		console.log(Socket)
 		setInterval(()=>{
 			count++;
 			if(count==10){
