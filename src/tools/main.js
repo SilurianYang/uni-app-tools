@@ -30,55 +30,15 @@ req.defaultUp.baseData = { //设置公共参数，默认为空，设置此参数
 }
 
 //聊天测试
+import'./common/chat/webSocket.js';
 import store from "./common/chat/store.js";
-import socket from "./common/chat/socket.js";
-let count =0;
-async function TestSocket() {
-	try{
-		const Socket = await new socket({
-			url: 'ws://192.168.137.1:9999/',		//连接地址 必填
-			SocketState: {	//必填存储数据的地方
-				store,
-				success: ['SocketState', 'setSocketState'],		
-				err: ['SocketStateErr', 'setSocketStateErr']
-			},
-			onOpen:res=>{
-				console.log('连接成功')
-				count=0;
-			},
-			onClose:err=>{
-				console.log('关闭了连接')
-			},
-			onReload:res=>{
-				console.log('重载：'+res)
-			},
-			onMsg: msg => {}
-		});
-		console.log(Socket)
-		setInterval(()=>{
-			count++;
-			if(count==10){
-				Socket.nclose();	//关闭连接
-				setTimeout(()=>{
-					Socket.nrconnect();	//重新连接
-				},5000)
-			}
-			Socket.nsend('我是测试的哦')
-		},2000)
-	}catch(e){
-		console.log(e)
-	}
-};
-TestSocket();
-
-Vue.config.productionTip = false;
 Vue.prototype.$store = store;
 //聊天测试结束
 
 
 Vue.prototype.$req = req;
 Vue.prototype.$ToolsUp = ToolsUp;
-
+Vue.config.productionTip = false;
 
 App.mpType = 'app'
 
