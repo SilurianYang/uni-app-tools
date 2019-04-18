@@ -183,15 +183,28 @@ class Request {
 	/**
 	 * 内部下载文件，仅内部调用
 	 */
-	downFiles(extra) {
+	downFiles({
+		abort = () => {},
+		title = false,
+		...extra
+	} = {}) {
 		return new Promise((resolve, reject) => {
+			if (title) {
+				uni.showLoading({
+					title,
+					mask: true,
+				});
+			}
 			const downloadTask = uni.downloadFile({
 				...extra,
 				complete: ({
 					statusCode = 0,
 					...finsh
 				} = {}) => {
-					extra.abort(downloadTask, Object.assign({}, {
+					if (title) {
+						uni.hideLoading();
+					}
+					abort(downloadTask, Object.assign({}, {
 						statusCode,
 						...finsh
 					}));
@@ -201,7 +214,7 @@ class Request {
 					return reject(finsh)
 				},
 			})
-			extra.abort(downloadTask);
+			abort(downloadTask);
 		})
 	}
 	/**
