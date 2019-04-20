@@ -4,10 +4,12 @@ class Expand {
 			pf: plus.device.vendor === 'Apple' ? 'ios' : 'android',
 			pubFun: {
 				ios: {
-					imgLcoal: this._iosImgToLocal
+					imgLcoal: this._ImgToLocal,
+					CopyText: this._iosCopy
 				},
 				android: {
-					imgLcoal: this._androidImgToLocal
+					imgLcoal: this._ImgToLocal,
+					CopyText: this._androidCopy
 				}
 			}
 		}
@@ -58,9 +60,11 @@ class Expand {
 		})
 	}
 	/**
-	 * ios 保存图片到本地
+	 * 保存图片到本地
+	 * 下载图片然后保存，支持ios、android 
+	 * ios 支持base64
 	 */
-	_iosImgToLocal(path) {
+	_ImgToLocal(path) {
 		return new Promise((resolve, reject) => {
 			let imgDtask = plus.downloader.createDownload(path, {
 				method: "GET"
@@ -80,7 +84,7 @@ class Expand {
 		})
 	}
 	/**
-	 *  android 保存图片到本地
+	 *  android 保存base64格式的图片到本地
 	 */
 	_androidImgToLocal(path) {
 		return new Promise(async (resolve, reject) => {
@@ -115,6 +119,55 @@ class Expand {
 			}
 		})
 	}
+	/**
+	 * ios 复制文字
+	 */
+	_iosCopy(text) {
+		return new Promise((resolve) => {
+			let UIPasteboard = plus.ios.importClass("UIPasteboard");
+			let generalPasteboard = UIPasteboard.generalPasteboard();
+			generalPasteboard.plusCallMethod({
+				setValue: text,
+				forPasteboardType: "public.utf8-plain-text"
+			});
+			generalPasteboard.plusCallMethod({
+				valueForPasteboardType: "public.utf8-plain-text"
+			});
+			resolve();
+		})
+	}
+	/**
+	 * android 复制文字
+	 */
+	_androidCopy(text) {
+		return new Promise((resolve) => {
+			let Context = plus.android.importClass("android.content.Context");
+			let main = plus.android.runtimeMainActivity();
+			let clip = main.getSystemService(Context.CLIPBOARD_SERVICE);
+			plus.android.invoke(clip, "setText", text);
+			resolve();
+		})
+	}
+	/**
+	 * 复制文字
+	 * 仅App支持
+	 */
+	copyText(text) {
+		return new Promise((resolve, reject) => {
+			this.os.pubFun[this.os.pf].CopyText(text).then(() => {
+				resolve({
+					success: true,
+					msg: '复制成功'
+				});
+			}).catch(err => {
+				reject({
+					success: false,
+					msg: err
+				});
+			})
+		})
+	}
+
 	/**
 	 * 文件转换为base64
 	 * 仅App支持
