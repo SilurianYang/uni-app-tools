@@ -98,19 +98,30 @@
 		data() {
 			return {
 				InputBottom: 0,
-				titleName:''
+				titleName: ''
 			};
 		},
 		computed: {
 			...mapState(['SocketState'])
 		},
 		onLoad() {
-			console.log(this.SocketState)
+			console.log(this.$Socket);
+			let count=0;
+			setInterval(() => {
+				count++;
+// 				if (count == 10) {
+// 					this.$Socket.nclose(); //关闭连接
+// 					setTimeout(() => {
+// 						this.$Socket.nrconnect(); //重新连接
+// 					}, 5000)
+// 				}
+				this.$Socket.nsend('我是测试的哦')
+			}, 2000)
 		},
 		watch: {
 			'SocketState.msg': function(val) {
-				if(this.titleName!=val.name){
-					this.titleName=val.name;
+				if (this.titleName != val.name) {
+					this.titleName = val.name;
 					uni.setNavigationBarTitle({
 						title: `和${val.name}的聊天`
 					});
