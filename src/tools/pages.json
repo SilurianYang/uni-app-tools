@@ -10,8 +10,11 @@
 				"navigationBarTitleText": "uni-app",
 				"enablePullDownRefresh":true
 			}
+		},
+		{
+		    "path" : "pages/lazyload/lazyload",
+		    "style" : {}
 		}
-	    
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",

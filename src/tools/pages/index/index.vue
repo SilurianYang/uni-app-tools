@@ -3,6 +3,7 @@
 		<view>
 			<button type="primary" @click="testReq">测试ajax</button>
 			<button type="primary" @click="testUp">测试上传文件</button>
+			<button type="primary" @click="testDown">测试下载文件</button>
 		</view>
 	</view>
 </template>
@@ -32,6 +33,13 @@
 // 			},3000)
 		},
 		methods: {
+			async testDown(){
+				const res=await	this.$req.downFiles({
+					url:'http://192.168.0.29:8081/static/a.txt',
+					title:"正在下载"
+				})
+				console.log(res)
+			},
 		async	testUp() {
 			try{
 				const res=await	this.$ToolsUp.selectFiles({

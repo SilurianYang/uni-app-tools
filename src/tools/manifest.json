@@ -7,9 +7,9 @@
 	"transformPx": false,
 	"app-plus": { /* 5+App特有相关 */
 		"splashscreen": {
-			"alwaysShowBeforeRender": true,
-			"waiting": true,
-			"autoclose": true,
+			"alwaysShowBeforeRender": false,
+			"waiting": false,
+			"autoclose": false,
 			"delay": 0
 		},
 		"modules": { /* 模块配置 */
