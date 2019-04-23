@@ -1,76 +1,32 @@
 <template>
 	<view>
 		<view class="cu-chat">
-			<view class="cu-item self">
-				<view class="main">
-					<view class="content bg-green shadow">
-						<!-- <text>5555</text> -->
-						<text v-if="SocketState.msg">{{SocketState.msg.count}}</text>
+			<div class="prop" v-if="propHide">
+				<div class="box">
+					<input type="text" v-model="selfName" placeholder="请输入用户名" class="userIput" />
+					<button type="primary" @click="suerName">确定</button>
+				</div>
+			</div>
+
+			<view class="cu-item" v-for="(item,index) in SocketState.chartPage" :key="index" :class="{'self':item.msg.selfName==selfName}">
+					<view class="main" v-if="item.msg.selfName==selfName">
+						<view class="content bg-green shadow">
+							<text>{{item.msg.text}}</text>
+						</view>
 					</view>
-				</view>
-				<view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
-				<view class="date">2018年3月23日 13:23</view>
-			</view>
-			<view class="cu-info round">对方撤回一条消息!</view>
-			<view class="cu-item">
-				<view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
-				<view class="main">
-					<view class="content shadow">
-						<text>喵喵喵！喵喵喵！</text>
+					<view class="cu-avatar radius" v-if="item.msg.selfName!=selfName" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
+					
+					<view class="main" v-if="item.msg.selfName!=selfName">
+						<view class="content shadow">
+							<text>{{item.msg.text}}</text>
+						</view>
 					</view>
-				</view>
-				<view class="date "> 13:23</view>
+					
+					<view class="cu-avatar radius" v-if="item.msg.selfName==selfName" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
+					<view class="date">{{item.msg.selfName}}</view>
 			</view>
-			<view class="cu-info">
-				<text class="cuIcon-roundclosefill text-red "></text> 对方拒绝了你的消息
-			</view>
-			<view class="cu-info">
-				对方开启了好友验证，你还不是他(她)的好友。请先发送好友验证请求，对方验证通过后，才能聊天。
-				<text class="text-blue">发送好友验证</text>
-			</view>
-			<view class="cu-item self">
-				<view class="main">
-					<image src="https://ossweb-img.qq.com/images/lol/web201310/skin/big10006.jpg" class="radius" mode="widthFix"></image>
-				</view>
-				<view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
-				<view class="date"> 13:23</view>
-			</view>
-			<view class="cu-item self">
-				<view class="main">
-					<view class="action text-bold text-grey">
-						3"
-					</view>
-					<view class="content shadow">
-						<text class="cuIcon-sound text-xxl padding-right-xl"> </text>
-					</view>
-				</view>
-				<view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
-				<view class="date">13:23</view>
-			</view>
-			<view class="cu-item self">
-				<view class="main">
-					<view class="action">
-						<text class="cuIcon-locationfill text-orange text-xxl"></text>
-					</view>
-					<view class="content shadow">
-						喵星球，喵喵市
-					</view>
-				</view>
-				<view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
-				<view class="date">13:23</view>
-			</view>
-			<view class="cu-item">
-				<view class="cu-avatar radius" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
-				<view class="main">
-					<view class="content shadow">
-						@#$^&**
-					</view>
-					<view class="action text-grey">
-						<text class="cuIcon-warnfill text-red text-xxl"></text> <text class="text-sm margin-left-sm">翻译错误</text>
-					</view>
-				</view>
-				<view class="date">13:23</view>
-			</view>
+
+
 		</view>
 
 		<view class="cu-bar foot input" :style="[{bottom:InputBottom+'px'}]">
@@ -78,11 +34,11 @@
 				<text class="cuIcon-sound text-grey"></text>
 			</view>
 			<input class="solid-bottom" :adjust-position="false" :focus="false" maxlength="300" cursor-spacing="10" @focus="InputFocus"
-			 @blur="InputBlur"></input>
+			 @blur="InputBlur" v-model="userMsg"></input>
 			<view class="action">
 				<text class="cuIcon-emojifill text-grey"></text>
 			</view>
-			<button class="cu-btn bg-green shadow">发送</button>
+			<button class="cu-btn bg-green shadow" @click="sendMsg">发送</button>
 		</view>
 
 	</view>
@@ -98,37 +54,38 @@
 		data() {
 			return {
 				InputBottom: 0,
-				titleName: ''
+				selfName: '',
+				userMsg: '',
+				propHide: true
 			};
 		},
 		computed: {
 			...mapState(['SocketState'])
 		},
 		onLoad() {
-			console.log(this.$Socket);
-			let count=0;
-			setInterval(() => {
-				count++;
-// 				if (count == 10) {
-// 					this.$Socket.nclose(); //关闭连接
-// 					setTimeout(() => {
-// 						this.$Socket.nrconnect(); //重新连接
-// 					}, 5000)
-// 				}
-				this.$Socket.nsend('我是测试的哦')
-			}, 2000)
-		},
-		watch: {
-			'SocketState.msg': function(val) {
-				if (this.titleName != val.name) {
-					this.titleName = val.name;
-					uni.setNavigationBarTitle({
-						title: `和${val.name}的聊天`
-					});
-				}
-			}
+			uni.setNavigationBarTitle({
+				title: `聊天室`
+			});
 		},
 		methods: {
+			sendMsg() {
+				if (this.userMsg == '') {
+					return false;
+				}
+				let msg = {
+					type: 'self',
+					selfName: this.selfName,
+					text: this.userMsg,
+					time: new Date().toLocaleTimeString()
+				};
+				this.$Socket.nsend(JSON.stringify(msg));
+				this.userMsg = '';
+			},
+			suerName() {
+				if (this.selfName !== '') {
+					this.propHide = false
+				}
+			},
 			InputFocus(e) {
 				this.InputBottom = e.detail.height
 			},
@@ -145,5 +102,31 @@
 
 	page {
 		padding-bottom: 100upx;
+	}
+
+	.prop {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		z-index: 999999;
+		background-color: rgba(0, 0, 0, 0.2);
+
+		.box {
+			width: 80%;
+			height: 300upx;
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			margin-left: -40%;
+			margin-top: -150upx;
+			background-color: #fff;
+
+			.userIput {
+				margin: 60upx 0;
+				text-align: center;
+			}
+		}
 	}
 </style>

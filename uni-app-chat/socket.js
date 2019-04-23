@@ -74,9 +74,14 @@ class Socket {
 			})
 			uni.onSocketMessage((msg = '{}') => {
 				msg = JSON.parse(msg.data);
-				let newMsg = {};
-				Object.assign(newMsg, this.SUCCESSVAL, msg);
-				this.STORE.commit(this.SUCCESSFUN, newMsg);
+				let key=Object.keys(msg)[0];
+				let newMsg = [];
+				if(key){
+					newMsg=JSON.parse(JSON.stringify(this.SUCCESSVAL[key]||[]));
+					newMsg.push(msg[key]);
+				}
+				this.SUCCESSVAL[key]=newMsg;
+				this.STORE.commit(this.SUCCESSFUN, Object.create(this.SUCCESSVAL));
 				onMsg(msg);
 			})
 			uni.onSocketClose((err = '{}') => {
