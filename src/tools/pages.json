@@ -2,7 +2,11 @@
 	"pages": [
 		{
 		    "path" : "pages/chat/chat",
-		    "style" : {}
+		    "style" : {
+				"app-plus":{
+					"bounce":"none"
+				}
+			}
 		},
 		{
 			"path": "pages/index/index",
@@ -10,10 +14,6 @@
 				"navigationBarTitleText": "uni-app",
 				"enablePullDownRefresh":true
 			}
-		},
-		{
-		    "path" : "pages/lazyload/lazyload",
-		    "style" : {}
 		}
     ],
 	"globalStyle": {
