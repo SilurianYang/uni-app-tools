@@ -1,6 +1,6 @@
 {
-	"name" : "tools",
-	"appid" : "__UNI__9233F37",
+	"name": "tools",
+	"appid": "__UNI__9233F37",
 	"description": "",
 	"versionName": "1.0.0",
 	"versionCode": "100",
@@ -58,5 +58,16 @@
 			"urlCheck": false
 		},
 		"usingComponents": true
+	},
+	"h5": {
+		"devServer": {
+			"proxy": {
+				"/": {
+					"target": "http://localhost:3000",
+					"changeOrigin": true,
+					"ws": false
+				}
+			}
+		}
 	}
 }
