@@ -185,10 +185,14 @@ class Request {
 	 */
 	downFiles({
 		abort = () => {},
+		path='',
 		title = false,
 		...extra
 	} = {}) {
 		return new Promise((resolve, reject) => {
+			if(!path){
+				reject('请选设置请求路径');
+			}
 			if (title) {
 				uni.showLoading({
 					title,
@@ -196,6 +200,7 @@ class Request {
 				});
 			}
 			const downloadTask = uni.downloadFile({
+				url:path,
 				...extra,
 				complete: ({
 					statusCode = 0,
@@ -204,12 +209,12 @@ class Request {
 					if (title) {
 						uni.hideLoading();
 					}
-					abort(downloadTask, Object.assign({}, {
+					if (statusCode === 200) {
+						return resolve(Object.assign({}, {
 						statusCode,
+						params:extra,
 						...finsh
 					}));
-					if (statusCode === 200) {
-						return resolve(finsh);
 					}
 					return reject(finsh)
 				},
