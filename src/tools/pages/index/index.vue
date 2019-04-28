@@ -1,9 +1,11 @@
 <template>
 	<view class="content">
 		<view>
+			<button type="primary" @click="testplatform">获取当前运行环境</button>
 			<button type="primary" @click="testReq">测试ajax</button>
 			<button type="primary" @click="testUp">测试上传文件</button>
 			<button type="primary" @click="testDown">测试下载文件</button>
+			<button type="primary" @click="testProxy">通过代理设置数据</button>
 		</view>
 	</view>
 </template>
@@ -20,6 +22,23 @@
 		},
 		onLoad() {},
 		methods: {
+			testProxy() {
+				let proxyData = {
+					name: 'hhyang',
+					age: 21
+				}
+				this.$req.proxy(proxyData, (key, val, oldval) => {
+					console.log(`${key}:从${oldval}变成了${val}`);
+				})
+				console.log(proxyData)
+				setTimeout(() => {
+					proxyData.age = 22;
+				}, 2000)
+			},
+			testplatform() {
+				let type = this.$req.platformChunk();
+				console.log(type);
+			},
 			async testDown() {
 				const res = await this.$req.downFiles({
 					path: 'http://localhost:10086/static/hhyang.txt',

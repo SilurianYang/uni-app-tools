@@ -29,7 +29,7 @@ let _defaultUp = {
 /**
  * 代理控制 2019年4月6日16:06:05
  */
-let ProxyControll = (obj, callback = (key, val) => {}) => {
+let ProxyControll = (obj, callback = (key, val, oldval) => {}) => {
 	for (let key in obj) {
 		let itemval = obj[key];
 		Object.defineProperty(obj, key, {
@@ -38,8 +38,8 @@ let ProxyControll = (obj, callback = (key, val) => {}) => {
 				return this[`HHYANG_${key}`]
 			},
 			set: function(newvalue) {
-				this[`HHYANG_${key}`] = newvalue;
-				callback(key, newvalue);
+				callback(key, newvalue, this[`HHYANG_${key}`]);
+				this[`HHYANG_${key}`]= newvalue;
 			}
 
 		})
@@ -185,12 +185,12 @@ class Request {
 	 */
 	downFiles({
 		abort = () => {},
-		path='',
+		path = '',
 		title = false,
 		...extra
 	} = {}) {
 		return new Promise((resolve, reject) => {
-			if(!path){
+			if (!path) {
 				reject('请选设置请求路径');
 			}
 			if (title) {
@@ -200,7 +200,7 @@ class Request {
 				});
 			}
 			const downloadTask = uni.downloadFile({
-				url:path,
+				url: path,
 				...extra,
 				complete: ({
 					statusCode = 0,
@@ -211,10 +211,10 @@ class Request {
 					}
 					if (statusCode === 200) {
 						return resolve(Object.assign({}, {
-						statusCode,
-						params:extra,
-						...finsh
-					}));
+							statusCode,
+							params: extra,
+							...finsh
+						}));
 					}
 					return reject(finsh)
 				},
