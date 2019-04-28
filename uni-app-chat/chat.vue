@@ -57,12 +57,16 @@
 </template>
 
 <script>
+	//如需启动，需在main.js 中打开 聊天测试中的注释代码
 	import {
 		mapMutations,
 		mapState
 	} from 'vuex';
 
+	// #ifdef APP-PLUS
 	let RM = uni.getRecorderManager();
+	// #endif
+
 	let scrennH = 0;
 	let androidH = 0;
 	let androidOff = 0;
@@ -93,6 +97,21 @@
 			if (plus.device.vendor !== 'Apple') {
 				this.isIos = false;
 			}
+			RM.onStop(({
+				tempFilePath
+			} = {}) => {
+				let isCancel = this.moveCancel;
+				this.moveCancel = false;
+				this.showSound = false;
+				this.moveCancelText = '手指上滑，取消发送';
+				this.voiceText = '按住 说话';
+				if (!isCancel) {
+					this.sendMsg({
+						Msg: tempFilePath,
+						type: 0
+					})
+				}
+			})
 			// #endif
 			setTimeout(() => {
 				let crSelect = uni.createSelectorQuery();
@@ -109,21 +128,6 @@
 					androidOff = androidH - scrennH;
 				}
 				this.isScrollBottom();
-			})
-			RM.onStop(({
-				tempFilePath
-			} = {}) => {
-				let isCancel = this.moveCancel;
-				this.moveCancel = false;
-				this.showSound = false;
-				this.moveCancelText = '手指上滑，取消发送';
-				this.voiceText = '按住 说话';
-				if (!isCancel) {
-					this.sendMsg({
-						Msg: savedFilePath,
-						type: 0
-					})
-				}
 			})
 		},
 		watch: {
@@ -223,6 +227,14 @@
 
 	page {
 		padding-bottom: 100upx;
+	}
+
+	.chatBox {
+		.content {
+			word-wrap: break-word;
+			white-space: normal;
+			word-break: break-all;
+		}
 	}
 
 	.voiceSwitch {

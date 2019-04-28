@@ -62,7 +62,10 @@
 		mapState
 	} from 'vuex';
 
+	// #ifdef APP-PLUS
 	let RM = uni.getRecorderManager();
+	// #endif
+
 	let scrennH = 0;
 	let androidH = 0;
 	let androidOff = 0;
@@ -93,6 +96,21 @@
 			if (plus.device.vendor !== 'Apple') {
 				this.isIos = false;
 			}
+			RM.onStop(({
+				tempFilePath
+			} = {}) => {
+				let isCancel = this.moveCancel;
+				this.moveCancel = false;
+				this.showSound = false;
+				this.moveCancelText = '手指上滑，取消发送';
+				this.voiceText = '按住 说话';
+				if (!isCancel) {
+					this.sendMsg({
+						Msg: tempFilePath,
+						type: 0
+					})
+				}
+			})
 			// #endif
 			setTimeout(() => {
 				let crSelect = uni.createSelectorQuery();
@@ -110,21 +128,6 @@
 				}
 				this.isScrollBottom();
 			})
-			RM.onStop(({
-				tempFilePath
-			} = {}) => {
-				let isCancel = this.moveCancel;
-				this.moveCancel = false;
-				this.showSound = false;
-				this.moveCancelText = '手指上滑，取消发送';
-				this.voiceText = '按住 说话';
-				if (!isCancel) {
-					this.sendMsg({
-						Msg:savedFilePath,
-						type:0
-					})
-				}
-			})
 		},
 		watch: {
 			'SocketState.chartPage': function(val) {
@@ -134,9 +137,9 @@
 		},
 		methods: {
 			sendMsg({
-				Msg=this.userMsg,
-				type=1	
-			}={}) {
+				Msg = this.userMsg,
+				type = 1
+			} = {}) {
 				if (Msg == '') {
 					return false;
 				}
@@ -147,7 +150,7 @@
 					time: new Date().toLocaleTimeString()
 				};
 				this.$Socket.nsend(JSON.stringify(msg));
-				if(type=1){
+				if (type = 1) {
 					this.userMsg = '';
 				}
 			},
@@ -223,6 +226,14 @@
 
 	page {
 		padding-bottom: 100upx;
+	}
+
+	.chatBox {
+		.content {
+			word-wrap: break-word;
+			white-space: normal;
+			word-break: break-all;
+		}
 	}
 
 	.voiceSwitch {

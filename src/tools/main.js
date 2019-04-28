@@ -30,11 +30,10 @@ req.defaultUp.baseData = { //设置公共参数，默认为空，设置此参数
 }
 
 //聊天测试
-import'./common/chat/webSocket.js';
+//import'./common/chat/webSocket.js';
 import store from "./common/chat/store.js";
 Vue.prototype.$store = store;
 //聊天测试结束
-
 
 Vue.prototype.$req = req;
 Vue.prototype.$ToolsUp = ToolsUp;

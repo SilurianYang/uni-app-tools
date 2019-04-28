@@ -18,43 +18,36 @@
 		onPullDownRefresh() {
 			uni.stopPullDownRefresh();
 		},
-		onLoad() {
-// 			setTimeout(async ()=>{
-// 				this.$ToolsUp.defaultFile.upOpenDown=true;
-// 			const res=	await this.$ToolsUp.upnNetRes({
-// 					netPath:['http://192.168.137.1:8080/static/a.txt','http://192.168.137.1:8080/static/a.txt'],
-// 					upPath:'example/upload',
-// 					abort:(bt,finsh)=>{
-// 					},
-// 					title:'正在上传',
-// 					files:['image']
-// 				});
-// 				console.log(res)
-// 			},3000)
-		},
+		onLoad() {},
 		methods: {
-			async testDown(){
-				const res=await	this.$req.downFiles({
-					url:'http://192.168.0.29:8081/static/a.txt',
-					title:"正在下载"
+			async testDown() {
+				const res = await this.$req.downFiles({
+					path: 'http://localhost:10086/static/hhyang.txt',
+					abort: (bt) => {
+						bt.onProgressUpdate(ps => {
+							console.log('下载进度' + ps.progress);
+							console.log('已经下载的数据长度' + ps.totalBytesWritten);
+							console.log('预期需要下载的数据总长度' + ps.totalBytesExpectedToWrite);
+						})
+					}
 				})
 				console.log(res)
 			},
-		async	testUp() {
-			try{
-				const res=await	this.$ToolsUp.selectFiles({
-						type:2,
-						maximum:3,
-						upload:{
-							path:'example/upload',
-							files:['image','image','image'],
-							title:'正在上传'
+			async testUp() {
+				try {
+					const res = await this.$ToolsUp.selectFiles({
+						type: 2,
+						maximum: 3,
+						upload: {
+							path: 'example/upload',
+							files: ['image', 'image', 'image'],
+							title: '正在上传'
 						}
 					})
 					console.log(JSON.stringify(res))
-			}catch(e){
-				console.log(e)
-			}
+				} catch (e) {
+					console.log(e)
+				}
 
 
 			},
@@ -70,8 +63,8 @@
 							//bt.abort();
 						},
 					}, {
-						parmas1:'我是额外参数1',
-						parmas2:'我是额外参数2'
+						parmas1: '我是额外参数1',
+						parmas2: '我是额外参数2'
 					})
 				} catch (e) {
 					console.log(e)

@@ -1,6 +1,14 @@
 {
 	"pages": [
 		{
+		    "path" : "pages/proxy/proxy",
+		    "style" : {
+				"app-plus":{
+					"bounce":"none"
+				}
+			}
+		},
+		{
 		    "path" : "pages/chat/chat",
 		    "style" : {
 				"app-plus":{
@@ -11,10 +19,12 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app",
-				"enablePullDownRefresh":true
+				"app-plus":{
+					"bounce":"none"
+				}
 			}
 		}
+        
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
