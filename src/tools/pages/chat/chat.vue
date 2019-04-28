@@ -57,6 +57,7 @@
 </template>
 
 <script>
+	//如需启动，需在main.js 中打开 聊天测试中的注释代码
 	import {
 		mapMutations,
 		mapState
