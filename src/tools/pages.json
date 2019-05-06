@@ -1,7 +1,7 @@
 {
 	"pages": [
 		{
-		    "path" : "pages/proxy/proxy",
+		    "path" : "pages/chat/chat",
 		    "style" : {
 				"app-plus":{
 					"bounce":"none"
@@ -9,7 +9,7 @@
 			}
 		},
 		{
-		    "path" : "pages/chat/chat",
+		    "path" : "pages/proxy/proxy",
 		    "style" : {
 				"app-plus":{
 					"bounce":"none"

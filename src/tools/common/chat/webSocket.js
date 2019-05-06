@@ -8,16 +8,37 @@ new socket({
 		success: ['SocketState', 'setSocketState'],
 		err: ['SocketStateErr', 'setSocketStateErr']
 	},
-	onOpen: res => {
+	maxInterValCount:5,
+	onOpen: (res, sk) => {
 		console.log('连接成功')
+		let msg = {
+			type: 'self',
+			selfName: '老司机',
+			text: '连接成功了',
+			time: new Date().toLocaleTimeString()
+		};
+		sk.nsend(JSON.stringify(msg));
 	},
-	onClose: err => {
+	onClose: (err, sk) => {
 		console.log('关闭了连接')
 	},
-	onReload: res => {
+	onReload: (err, sk) => {
 		console.log('重载：' + res)
 	},
-	onMsg: msg => {},
+	onRdFinsh:(count,sk)=>{
+		console.log(count+'次重连已完成')
+	},
+	onMsg: (msg,sk) => {
+		console.log(msg)
+	}
 }).then(res => {
 	Vue.prototype.$Socket = res;
+	
+	res.eventPatch.onOpen(msg=>{
+		console.log('连接成功')
+	});
+	
+	res.eventPatch.onMsg(msg=>{
+		console.log(msg)
+	});
 })
