@@ -9,11 +9,11 @@ class Socket {
 		onReload = info => {},
 		onRdFinsh = () => {},
 		maxInterValCount = 10,
-		interValTime = 1000,
+		interValTime = 2000,
 		SocketState = {},
 		...args
 	} = {}) {
-		this.SocketTask = {  
+		this.SocketTask = {
 			nsend: text => {},
 			nclose: t => {},
 			nrconnect: () => {},
@@ -22,7 +22,7 @@ class Socket {
 			maxInterValCount,
 			interValTime,
 			InterValCount: 0,
-			eventPatch:null,
+			eventPatch: null,
 			url,
 			onOpen,
 			onMsg,
@@ -44,32 +44,34 @@ class Socket {
 	 * 仅供内部使用，事件注册
 	 */
 	_EventDispath() {
-		let events={
-				onOpen:[],
-				onMsg:[],
-				onClose:[],
-				onError:[],
-				onReload:[],
-				onRdFinsh:[],
-			}
+		let SocketTask=this.SocketTask;
+		let events = {
+			onOpen: [],
+			onMsg: [],
+			onClose: [],
+			onError: [],
+			onReload: [],
+			onRdFinsh: [],
+		}
+
 		function EventDispatcher() {
 			this.events = events;
 		}
 		for (let key in events) {
-			EventDispatcher.prototype[key]=function(handler){
-				 if (typeof handler != 'function') return;
+			EventDispatcher.prototype[key] = function(handler) {
+				if (typeof handler != 'function') return;
 				this.events[key].push(handler)
 			}
 		}
-		EventDispatcher.prototype.dispatchEvent =function(type,msg){
-			let evenArr=this.events[type];
-			if(evenArr.length>0){
+		EventDispatcher.prototype.dispatchEvent = function(type, msg) {
+			let evenArr = this.events[type];
+			if (evenArr.length > 0) {
 				for (let i = 0; i < evenArr.length; i++) {
-					evenArr[i](msg)
+					evenArr[i](msg,SocketTask)
 				}
 			}
 		}
-		this.SocketTask.eventPatch=new EventDispatcher();  
+		SocketTask.eventPatch = new EventDispatcher();
 	}
 	/**
 	 * 心跳检测
@@ -89,6 +91,7 @@ class Socket {
 					}, this.SocketTask.interValTime)
 				} else {
 					this.SocketTask.onRdFinsh(this.SocketTask.maxInterValCount, this.SocketTask);
+					this.SocketTask.eventPatch.dispatchEvent('onRdFinsh',this.SocketTask.maxInterValCount);
 				}
 			} catch (e) {
 				console.log(JSON.stringify(e))
@@ -116,10 +119,10 @@ class Socket {
 				}
 				resolve();
 				onOpen(res, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onOpen',{res,sk:this.SocketTask})
+				this.SocketTask.eventPatch.dispatchEvent('onOpen', res)
 			})
 			uni.onSocketMessage((msg = '{}') => {
-				if (typeof res !== "object") {
+				if (typeof msg.data !== "object") {
 					msg = JSON.parse(msg.data);
 				}
 				let key = Object.keys(msg)[0];
@@ -129,34 +132,30 @@ class Socket {
 					newMsg.push(msg[key]);
 				}
 				this.SUCCESSVAL[key] = newMsg;
-				this.STORE.commit(this.SUCCESSFUN, Object.create(this.SUCCESSVAL));
+				this.STORE.commit(this.SUCCESSFUN, Object.assign({},this.SUCCESSVAL));
 				onMsg(msg, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onMsg',{msg,sk:this.SocketTask})
+				this.SocketTask.eventPatch.dispatchEvent('onMsg',msg)
 			})
 			uni.onSocketClose((err = '{}') => {
 				this.SocketTask.isconnect = false;
 				this.hbDetection();
-				if (typeof res !== "object") {
+				if (typeof err !== "object") {
 					err = JSON.parse(err);
 				}
-				let newErr = {};
-				Object.assign(newErr, this.ERRVAL, err);
-				this.STORE.commit(this.ERRFUN, newErr);
+				this.STORE.commit(this.ERRFUN, Object.assign({}, this.ERRVAL, err));
 				reject(err);
 				onClose(err, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onClose',{err,sk:this.SocketTask})
+				this.SocketTask.eventPatch.dispatchEvent('onClose', err)
 			})
 			uni.onSocketError((err = '{}') => {
 				uni.closeSocket();
-				if (typeof res !== "object") {
+				if (typeof err !== "object") {
 					err = JSON.parse(err);
 				}
-				let newErr = {};
-				Object.assign(newErr, this.ERRVAL, err);
-				this.STORE.commit(this.ERRFUN, newErr);
+				this.STORE.commit(this.ERRFUN, Object.assign({}, this.ERRVAL, err));
 				reject(err);
 				onError(err, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onError',{err,sk:this.SocketTask})
+				this.SocketTask.eventPatch.dispatchEvent('onError',err)
 			})
 			this.SocketTask.nsend = text => {
 				uni.sendSocketMessage({
@@ -178,7 +177,7 @@ class Socket {
 					console.log(JSON.stringify(e))
 				}
 				onReload(reloadStatus, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onReload',{reloadStatus,sk:this.SocketTask})
+				this.SocketTask.eventPatch.dispatchEvent('onReload',reloadStatus)
 			}
 		})
 	}

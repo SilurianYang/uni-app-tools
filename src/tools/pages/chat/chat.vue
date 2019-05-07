@@ -16,22 +16,22 @@
 
 			<scroll-view :scroll-y="true" class="scroll-y" :scroll-top="scrollTop" :scroll-with-animation="true">
 				<div class="chatBox">
-					<view class="cu-item" v-for="(item,index) in chartPage" :key="index" :class="{'self':item.msg.selfName==selfName}">
-						<view class="main" v-if="item.msg.selfName==selfName">
+					<view class="cu-item" v-for="(item,index) in chartPage" :key="index" :class="{'self':item.selfName==selfName}">
+						<view class="main" v-if="item.selfName==selfName">
 							<view class="content bg-green shadow">
-								<text>{{item.msg.text}}</text>
+								<text>{{item.text}}</text>
 							</view>
 						</view>
-						<view class="cu-avatar radius" v-if="item.msg.selfName!=selfName" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
+						<view class="cu-avatar radius" v-if="item.selfName!=selfName" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big143004.jpg);"></view>
 
-						<view class="main" v-if="item.msg.selfName!=selfName">
+						<view class="main" v-if="item.selfName!=selfName">
 							<view class="content shadow">
-								<text>{{item.msg.text}}</text>
+								<text>{{item.text}}</text>
 							</view>
 						</view>
 
-						<view class="cu-avatar radius" v-if="item.msg.selfName==selfName" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
-						<view class="date">{{item.msg.selfName}}</view>
+						<view class="cu-avatar radius" v-if="item.selfName==selfName" style="background-image:url(https://ossweb-img.qq.com/images/lol/web201310/skin/big107000.jpg);"></view>
+						<view class="date">{{item.selfName}}</view>
 					</view>
 				</div>
 			</scroll-view>

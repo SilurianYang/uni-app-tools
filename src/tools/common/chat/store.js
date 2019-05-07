@@ -10,7 +10,7 @@ const store = new Vuex.Store({
 	},
 	mutations: {
 		setSocketState(that, info) {
-			that.SocketState = info
+			that.SocketState = info;
 		},
 		setSocketStateErr(that, info) {
 			that.SocketStateErr = info;
