@@ -8,7 +8,8 @@ new socket({
 		success: ['SocketState', 'setSocketState'],
 		err: ['SocketStateErr', 'setSocketStateErr']
 	},
-	maxInterValCount:5,
+	maxInterValCount:10,
+	interValTime:2000,
 	onOpen: (res, sk) => {
 		console.log('连接成功')
 		let msg = {
@@ -29,16 +30,8 @@ new socket({
 		console.log(count+'次重连已完成')
 	},
 	onMsg: (msg,sk) => {
-		console.log(msg)
+		//console.log(msg)
 	}
 }).then(res => {
 	Vue.prototype.$Socket = res;
-	
-	res.eventPatch.onOpen(msg=>{
-		console.log('连接成功')
-	});
-	
-	res.eventPatch.onMsg(msg=>{
-		console.log(msg)
-	});
 })
