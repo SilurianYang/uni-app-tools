@@ -24,13 +24,13 @@ req.defaultReq.baseData = { //设置公共参数，默认为空，设置此参�
 }
 
 //上传测试工程
-req.defaultUp.url='https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
+// req.defaultUp.url='https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
 req.defaultUp.baseData = { //设置公共参数，默认为空，设置此参数后每次发送请求都会带上此参数
 	token: '000-000-000-000-defaultUp'
 }
 
 //聊天测试
-import'./common/chat/webSocket.js';
+//import'./common/chat/webSocket.js';
 import store from "./common/chat/store.js";
 Vue.prototype.$store = store;
 //聊天测试结束

@@ -6,6 +6,8 @@
 			<button type="primary" @click="testUp">测试上传文件</button>
 			<button type="primary" @click="testDown">测试下载文件</button>
 			<button type="primary" @click="testProxy">通过代理设置数据</button>
+			<button type="primary" @click="gotoPage('../customImg/customImg')">自定义图片格式</button>
+			<button type="warn" @click="gotoPage('../chat/chat')">聊天测试</button>
 		</view>
 	</view>
 </template>
@@ -20,8 +22,17 @@
 		onPullDownRefresh() {
 			uni.stopPullDownRefresh();
 		},
-		onLoad() {},
+		onLoad() {
+			// #ifdef APP-PLUS
+				plus.navigator.closeSplashscreen();
+			// #endif
+		},
 		methods: {
+			gotoPage(url){
+				uni.navigateTo({
+					url
+				});
+			},
 			testProxy() {
 				let proxyData = {
 					name: 'hhyang',

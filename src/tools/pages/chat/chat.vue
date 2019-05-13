@@ -62,11 +62,9 @@
 		mapMutations,
 		mapState
 	} from 'vuex';
-
 	// #ifdef APP-PLUS
 	let RM = uni.getRecorderManager();
 	// #endif
-
 	let scrennH = 0;
 	let androidH = 0;
 	let androidOff = 0;
@@ -202,7 +200,6 @@
 						this.voiceText = '松开 结束'
 					}
 				} else { //向下滚动		
-
 				}
 			},
 			//录音结束
@@ -224,11 +221,9 @@
 <style lang="scss">
 	@import "../../common/colorui/icon.css";
 	@import "../../common/colorui/main.css";
-
 	page {
 		padding-bottom: 100upx;
 	}
-
 	.chatBox {
 		.content {
 			word-wrap: break-word;
@@ -236,7 +231,6 @@
 			word-break: break-all;
 		}
 	}
-
 	.voiceSwitch {
 		font-size: 28upx;
 		flex: 1;
@@ -247,12 +241,10 @@
 		background-color: #e4e3e3;
 		border-radius: 8upx;
 		margin: 0 22upx;
-
 		&:active {
 			background-color: #ccc;
 		}
 	}
-
 	.showVoice {
 		.action {
 			&.face {
@@ -261,7 +253,6 @@
 			}
 		}
 	}
-
 	.scroll-y {
 		/* #ifdef H5 */
 		height: calc(100vh - 55px - 100upx);
@@ -270,7 +261,6 @@
 		height: calc(100vh - 100upx);
 		/* #endif */
 	}
-
 	.prop {
 		position: fixed;
 		left: 0;
@@ -279,7 +269,6 @@
 		height: 100%;
 		z-index: 999999;
 		background-color: rgba(0, 0, 0, 0.2);
-
 		.box {
 			width: 80%;
 			height: 300upx;
@@ -289,18 +278,15 @@
 			margin-left: -40%;
 			margin-top: -150upx;
 			background-color: #fff;
-
 			.userIput {
 				margin: 60upx 0;
 				text-align: center;
 			}
 		}
 	}
-
 	.cancel {
 		background-color: darkred;
 	}
-
 	.rprogress {
 		position: absolute;
 		left: 50%;
@@ -315,7 +301,6 @@
 		box-sizing: border-box;
 		z-index: 9999;
 	}
-
 	.rschedule {
 		background-color: rgba(0, 0, 0, 0);
 		border: 5px solid rgba(0, 183, 229, 0.9);
@@ -335,7 +320,6 @@
 		-webkit-animation: spin 1s infinite linear;
 		animation: spin 1s infinite linear;
 	}
-
 	.r-sigh {
 		display: none;
 		border-radius: 50px;
@@ -354,7 +338,6 @@
 		color: #2187e7;
 		box-sizing: border-box;
 	}
-
 	.rsalert {
 		font-size: 12px;
 		color: #bbb;
@@ -368,12 +351,10 @@
 		bottom: 0px;
 		box-sizing: border-box;
 	}
-
 	@keyframes spin {
 		0% {
 			transform: rotate(0deg);
 		}
-
 		100% {
 			transform: rotate(360deg);
 		}

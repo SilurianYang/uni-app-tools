@@ -1,31 +1,39 @@
 {
 	"pages": [
 		{
-		    "path" : "pages/chat/chat",
-		    "style" : {
-				"app-plus":{
-					"bounce":"none"
-				}
-			}
-		},
-		{
-		    "path" : "pages/proxy/proxy",
-		    "style" : {
-				"app-plus":{
-					"bounce":"none"
-				}
-			}
-		},
-		{
 			"path": "pages/index/index",
 			"style": {
-				"app-plus":{
-					"bounce":"none"
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/customImg/customImg",
+			"style": {
+				"navigationBarTitleText":"自定义图片格式",
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/chat/chat",
+			"style": {
+				"app-plus": {
+					"bounce": "none"
+				}
+			}
+		},
+		{
+			"path": "pages/proxy/proxy",
+			"style": {
+				"app-plus": {
+					"bounce": "none"
 				}
 			}
 		}
-        
-    ],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
