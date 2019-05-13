@@ -31,7 +31,7 @@
 				// #endif
 
 				uni.uploadFile({
-					url: 'http://192.168.0.29:1111/upload_images',
+					url: 'http://192.168.0.29:1111/upload_images', //本地接口，换成自己的
 					filePath,
 					name: 'upload',
 					success: (uploadFileRes) => {
