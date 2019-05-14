@@ -117,8 +117,8 @@ class Ctpic {
 	 */
 	app_URLtoBitmap({
 		base64,
-		filename,
-		format
+		filename='HHYANG',
+		format='png'
 	} = {}) {
 		return new Promise((resolve, reject) => {
 			let bitmap = new plus.nativeObj.Bitmap(`HHYANG_BITMAP)`);
@@ -189,8 +189,8 @@ class Ctpic {
 	 */
 	applet_URLtoPath({
 		base64,
-		filename,
-		format,
+		filename='HHYANG',
+		format='png',
 	} = {}) {
 		return new Promise((resolve, reject) => {
 			if (typeof wx === 'undefined') {
