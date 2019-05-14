@@ -63,6 +63,7 @@ class Ctpic {
 	h5_URLtoBlob({
 		base64,
 		filename,
+		resolvePath = true
 	} = {}) {
 		return new Promise(resolve => {
 			let arr = base64.split(','),
@@ -73,8 +74,13 @@ class Ctpic {
 			while (n--) {
 				u8arr[n] = bstr.charCodeAt(n);
 			}
-			let file=new File([u8arr], `${filename}.${mime.split('/')[1]}`,{ type: mime });
-			let urlBlob=(window.URL || window.webkitURL).createObjectURL(file);
+			let file = new File([u8arr], `${filename}.${mime.split('/')[1]}`, {
+				type: mime
+			});
+			let urlBlob = file;
+			if (resolvePath) {
+				urlBlob = (window.URL || window.webkitURL).createObjectURL(file)
+			}
 			resolve(urlBlob);
 		})
 	}
