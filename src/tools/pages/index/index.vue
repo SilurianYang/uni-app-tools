@@ -23,12 +23,74 @@
 			uni.stopPullDownRefresh();
 		},
 		onLoad() {
+
+			const users = [{
+					id: 11,
+					name: 'Adam',
+					age: 23,
+					group: 'editor',
+					a: {
+						id: 11,
+						name: 'Adam',
+						age: 23,
+						group: null
+					},
+					b:{
+						id: 0,
+						name: undefined,
+						age: null,
+					}
+				},
+				{
+					id: 47,
+					name: 'John',
+					age: 28,
+					group: 'admin'
+				},
+				{
+					id: 85,
+					name: 'William',
+					age: 34,
+					group: 'editor'
+				},
+				{
+					id: 97,
+					name: 'Oliver',
+					age: 28,
+					group: 'admin'
+				}
+			];
+			console.log(users);
+			setTimeout(()=>{
+			console.log(this.filterEmpty(users, '我是你爸爸'))	
+			},5000)
+
+
+
 			// #ifdef APP-PLUS
-				plus.navigator.closeSplashscreen();
+			plus.navigator.closeSplashscreen();
 			// #endif
 		},
 		methods: {
-			gotoPage(url){
+			/**
+			 * @param {Object} res	需要过滤的对象数据
+			 * @param {Object} reStr	空数据自动替换
+			 */
+			filterEmpty(res, reStr) {
+				if (typeof res != "object") {
+					return res;
+				}
+				for (let key in res) {
+					if (!res[key] && res[key] != 0) {
+						res[key] = reStr;
+					} else {
+						this.filterEmpty(res[key], reStr);
+					}
+				}
+				return res
+			},
+			
+			gotoPage(url) {
 				uni.navigateTo({
 					url
 				});

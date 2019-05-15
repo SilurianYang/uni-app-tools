@@ -20,6 +20,16 @@
 					isNet: true,
 					filename: '程玉琪',
 				});
+				let base64 = await ctpic.h5_appendFile({
+					path: res,
+				});
+				let file= await ctpic.h5_URLtoBlob({
+					base64,
+					filename:'这是转换回来的file对象',
+					resolvePath:false
+				})
+				console.log(file);
+				
 				let filePath = '';
 
 				// #ifdef APP-PLUS
@@ -30,14 +40,14 @@
 				filePath = res;
 				// #endif
 
-				uni.uploadFile({
-					url: 'http://192.168.0.29:1111/upload_images', //本地接口，换成自己的
-					filePath,
-					name: 'upload',
-					success: (uploadFileRes) => {
-						console.log(uploadFileRes.data);
-					}
-				});
+				// uni.uploadFile({
+				// 	url: 'http://192.168.0.29:1111/upload_images', //本地接口，换成自己的
+				// 	filePath,
+				// 	name: 'upload',
+				// 	success: (uploadFileRes) => {
+				// 		console.log(uploadFileRes.data);
+				// 	}
+				// });
 
 			} catch (e) {
 				console.log(e)
