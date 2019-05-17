@@ -178,9 +178,14 @@ class Ctpic {
 		// 2019年5月17日11:25:38 新增压缩图片
 		let promise_zip = (src, format, compress) => {
 			return new Promise((resolve, reject) => {
+				if(compress==1){		//不压缩
+					return resolve({
+						target:src
+					});
+				}
 				plus.zip.compressImage({
 					src,
-					dst: src,
+					dst: `_doc/HHYANG.${format}`,
 					overwrite:true,
 					quality:compress*100,
 					width:'50%',
@@ -220,7 +225,9 @@ class Ctpic {
 					removePath=path;
 					reject(e);
 				}
-				plus.io.resolveLocalFileSystemURL(removePath, entry =>entry.remove())
+				if(compress!=1){
+					plus.io.resolveLocalFileSystemURL(removePath, entry =>entry.remove())
+				}
 			}).catch(err => {
 				reject(`网络路径可能链接不通：${err}`);
 			})
