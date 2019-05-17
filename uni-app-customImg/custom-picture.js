@@ -16,6 +16,7 @@ class Ctpic {
 		};
 		this.platform = this.platformChunk();
 	}
+	
 	/**
 	 * 运行环境判断
 	 */
@@ -40,11 +41,13 @@ class Ctpic {
 		GetBase64 = false,
 		filename = 'HHYANG',
 		format = 'png',
+		compress = 1,
 		...args
 	} = {}) {
 		let platformFun = this.FunChunk[this.platform];
 		let base64 = await platformFun.file({
 			format,
+			compress,
 			...args
 		});
 		if (GetBase64) {
@@ -85,11 +88,15 @@ class Ctpic {
 		})
 	}
 	/**
-	 * h5端
+	 * h5端,网络图片，或者本地图片转base64
+	 * @param {path}  	网络路径、本地路径
+	 * @param {format}  自定义base64的类型，默认值png
+	 * @param {compress}  压缩图片百分比，默认不压缩 0-1之间，值越大越清晰
 	 */
 	h5_appendFile({
 		path = '',
 		format = 'png',
+		compress = 1,
 		...args
 	} = {}) {
 		return new Promise((resolve, reject) => {
@@ -104,7 +111,8 @@ class Ctpic {
 					canvas.setAttribute('width', w);
 					canvas.setAttribute('height', h);
 					ctx.drawImage(this, 0, 0, w, h);
-					let base64 = canvas.toDataURL(`image/${format}`, 1 || 0.8);
+					let base64 = canvas.toDataURL('image/jpeg', compress);
+					base64 = base64.replace(/^data\:image.{0,}base64,/i, `data:image/${format};base64,`);
 					resolve(base64);
 				},
 				img.onerror = err => {
@@ -117,8 +125,8 @@ class Ctpic {
 	 */
 	app_URLtoBitmap({
 		base64,
-		filename='HHYANG',
-		format='png'
+		filename = 'HHYANG',
+		format = 'png'
 	} = {}) {
 		return new Promise((resolve, reject) => {
 			let bitmap = new plus.nativeObj.Bitmap(`HHYANG_BITMAP)`);
@@ -139,12 +147,19 @@ class Ctpic {
 		})
 	}
 	/**
-	 * App 端
+	 * App 端 网络图片，或者本地图片转base64
+	 * 
+	 * 2019年5月17日11:22:55 新增压缩图片
+	 * @param {path}  支持的网络图片，或者本地图片
+	 * @param {isNet}	当前是否为网络图片，默认标识为本地图片  
+	 * @param {format}	转换后的图片格式，支持"jpg"、"png"  
+	 * @param {compress}  压缩图片百分比，默认不压缩 0-1之间，值越大越清晰
 	 */
 	app_appendFile({
 		path = '',
 		format = 'png',
 		isNet = false,
+		compress = 1,
 		...args
 	} = {}) {
 		let promise_d = new Promise((resolve, reject) => {
@@ -160,11 +175,30 @@ class Ctpic {
 			});
 			dtask.start();
 		})
+		// 2019年5月17日11:25:38 新增压缩图片
+		let promise_zip = (src, format, compress) => {
+			return new Promise((resolve, reject) => {
+				plus.zip.compressImage({
+					src,
+					dst: src,
+					overwrite:true,
+					quality:compress*100,
+					width:'50%',
+					height:'50%',
+				}, res => {
+					resolve(res);
+				}, err => {
+					reject(err);
+				});
+			})
+		}
+
 		let promise_b = (path, format) => {
 			return new Promise((resolve, reject) => {
 				let bitmap = new plus.nativeObj.Bitmap(`HHYANG_BITMAP)`);
 				bitmap.load(path, res => {
-					resolve(bitmap.toBase64Data().replace(/^data\:image\/.{0,}\;/, `data:image/${format};`));
+					let base64 = bitmap.toBase64Data();
+					resolve(base64.replace(/^data\:image\/.{0,}\;/i, `data:image/${format};`));
 					bitmap.clear();
 				}, err => {
 					bitmap.clear();
@@ -173,24 +207,32 @@ class Ctpic {
 			})
 		}
 		return new Promise((resolve, reject) => {
-			promise_d.then(path => {
-				promise_b(path, format).then(base64 => {
+			promise_d.then(async path => {
+				let removePath=null;
+				try {
+					let {
+						target
+					} = await promise_zip(path, format, compress);
+					let base64 = await promise_b(target, format);
+					removePath=target;
 					resolve(base64);
-				}).catch(err => {
-					reject(`文件加载失败：${err}`);
-				})
+				} catch (e) {
+					removePath=path;
+					reject(e);
+				}
+				plus.io.resolveLocalFileSystemURL(removePath, entry =>entry.remove())
 			}).catch(err => {
 				reject(`网络路径可能链接不通：${err}`);
 			})
 		})
 	}
 	/**
-	 * 微信小程序base64转为路径对象
+	 * 微信小程序base64转为路径对象 
 	 */
 	applet_URLtoPath({
 		base64,
-		filename='HHYANG',
-		format='png',
+		filename = 'HHYANG',
+		format = 'png',
 	} = {}) {
 		return new Promise((resolve, reject) => {
 			if (typeof wx === 'undefined') {
