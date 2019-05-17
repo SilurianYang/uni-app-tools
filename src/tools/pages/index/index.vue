@@ -13,6 +13,10 @@
 </template>
 
 <script>
+	import {
+		df
+	} from "../../common/request/request-downFiles.js"
+
 	export default {
 		data() {
 			return {
@@ -23,49 +27,6 @@
 			uni.stopPullDownRefresh();
 		},
 		onLoad() {
-
-			const users = [{
-					id: 11,
-					name: 'Adam',
-					age: 23,
-					group: 'editor',
-					a: {
-						id: 11,
-						name: 'Adam',
-						age: 23,
-						group: null
-					},
-					b:{
-						id: 0,
-						name: undefined,
-						age: null,
-					}
-				},
-				{
-					id: 47,
-					name: 'John',
-					age: 28,
-					group: 'admin'
-				},
-				{
-					id: 85,
-					name: 'William',
-					age: 34,
-					group: 'editor'
-				},
-				{
-					id: 97,
-					name: 'Oliver',
-					age: 28,
-					group: 'admin'
-				}
-			];
-			// console.log(users);
-			// setTimeout(()=>{
-			// console.log(this.filterEmpty(users, '我是你爸爸'))	
-			// },5000)
-
-
 
 			// #ifdef APP-PLUS
 			plus.navigator.closeSplashscreen();
@@ -89,7 +50,7 @@
 				}
 				return res
 			},
-			
+
 			gotoPage(url) {
 				uni.navigateTo({
 					url
@@ -113,8 +74,9 @@
 				console.log(type);
 			},
 			async testDown() {
-				const res = await this.$req.downFiles({
-					path: 'http://localhost:10086/static/hhyang.txt',
+				const res = await df.startDownFiles({
+					// path: 'http://localhost:10086/static/hhyang.txt',
+					path: ['http://localhost:10086/static/hhyang.txt', 'http://localhost:10086/static/cxq.jpg'],
 					abort: (bt) => {
 						bt.onProgressUpdate(ps => {
 							console.log('下载进度' + ps.progress);

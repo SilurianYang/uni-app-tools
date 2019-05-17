@@ -33,7 +33,7 @@ class DonwFiles extends RQ {
 				for (let i = 0; i < path.length; i++) {
 					let url = path[i];
 					let res = await this.downFiles({
-						url,
+						path:url,
 						abort,
 						...extra
 					})
