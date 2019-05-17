@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<image :src="src" mode=""></image>
+		<image :src="src" mode="" class="image"></image>
 	</view>
 </template>
 
@@ -19,10 +19,13 @@
 					path: 'https://ss1.bdstatic.com/70cFuXSh_Q1YnxGkpoWK1HF6hhy/it/u=299253315,3157332866&fm=26&gp=0.jpg',
 					isNet: true,
 					filename: '程玉琪',
+					GetBase64:true,
+					compress:0.5,
 				});
-				let base64 = await ctpic.h5_appendFile({
-					path: res,
-				});
+				this.src=res;
+				console.log(res);
+				return false;
+				
 				let file= await ctpic.h5_URLtoBlob({
 					base64,
 					filename:'这是转换回来的file对象',
@@ -57,6 +60,9 @@
 	}
 </script>
 
-<style>
-
+<style lang="scss">
+.image{
+	width: 100vw;
+	height: 100vh
+}
 </style>
