@@ -76,14 +76,20 @@
 			async testDown() {
 				const res = await df.startDownFiles({
 					// path: 'http://localhost:10086/static/hhyang.txt',
-					path: ['http://localhost:10086/static/hhyang.txt', 'http://localhost:10086/static/cxq.jpg'],
-					abort: (bt) => {
+					path: 'http://192.168.0.29:10086/static/hhyang.txt,http://192.168.0.29:10086/static/cxq.jpg',
+					//path: ['http://192.168.0.29:10086/static/hhyang.txt', 'http://192.168.0.29:10086/static/cxq.jpg'],
+					title:'正在下载',
+					abort: (bt,params) => {
+						if(params.index==0){
+							bt.abort();
+						}
 						bt.onProgressUpdate(ps => {
 							console.log('下载进度' + ps.progress);
 							console.log('已经下载的数据长度' + ps.totalBytesWritten);
 							console.log('预期需要下载的数据总长度' + ps.totalBytesExpectedToWrite);
 						})
-					}
+					},
+					
 				})
 				console.log(res)
 			},
