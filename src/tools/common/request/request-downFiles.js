@@ -22,18 +22,19 @@ class DonwFiles extends RQ {
 				tempFileInfo: [],
 				FilePath: []
 			};
-			try {
-				if (title) {
-					uni.showLoading({
-						title,
-						mask: true,
-					});
-				}
-				path = path.toString().split(',');
-				for (let i = 0; i < path.length; i++) {
-					let url = path[i];
+			if (title) {
+				uni.showLoading({
+					title,
+					mask: true,
+				});
+			}
+			path = path.toString().split(',');
+			for (let i = 0; i < path.length; i++) {
+				let url = path[i];
+				try {
 					let res = await this.downFiles({
-						path:url,
+						path: url,
+						index:i,
 						abort,
 						...extra
 					})
@@ -42,15 +43,15 @@ class DonwFiles extends RQ {
 						url,
 						filePath: res.tempFilePath
 					});
+				} catch (e) {
+					//TODO handle the exception
 				}
-				resolve(obj);
-				if (title) {
-					uni.hideLoading();
-				}
-
-			} catch (e) {
-				throw e
 			}
+			resolve(obj);
+			if (title) {
+				uni.hideLoading();
+			}
+
 		})
 	}
 }
