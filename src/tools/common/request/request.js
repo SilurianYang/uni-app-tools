@@ -187,6 +187,7 @@ class Request {
 		abort = () => {},
 		path = '',
 		title = false,
+		index=0,	//所属下载索引
 		...extra
 	} = {}) {
 		return new Promise((resolve, reject) => {
@@ -219,7 +220,13 @@ class Request {
 					return reject(finsh)
 				},
 			})
-			abort(downloadTask);
+			abort(downloadTask,{
+				abort,
+				path,
+				title,
+				index,
+				...extra
+			});
 		})
 	}
 	/**
