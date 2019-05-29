@@ -21,7 +21,8 @@
 			"path": "pages/chat/chat",
 			"style": {
 				"app-plus": {
-					"bounce": "none"
+					"bounce": "none",
+					"softinputNavBar":"none"
 				}
 			}
 		},

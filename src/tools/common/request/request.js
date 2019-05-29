@@ -14,9 +14,8 @@ let _defaultReq = {
 	type: 'GET',
 	dataType: 'json',
 	responseType: 'text',
-	testFun: (_data, _status) => {
-		return true
-	}
+	beforeSend:r=>r,
+	beforeFinsh: r=> r
 }
 let _defaultUp = {
 	url: '', //独立的url 
@@ -83,15 +82,9 @@ class Request {
 		finshFun = _f => {},
 		abortFun = _bt => {}
 	} = {}, ...extra) {
-		return new Promise((resolve, reject) => {
+		return new Promise(async (resolve, reject) => {
 			if (!this.defaultReq.isreq) {
 				return reject('要想使用ajax，请开放isreq 设置为true');
-			}
-			if (title) { //显示请求提示
-				uni.showLoading({
-					title,
-					mask: true,
-				});
 			}
 			Object.assign(data, this.defaultReq.baseData); //合并参数
 			if (typeof header === 'string') { //如果用户只想设置content-type
@@ -99,41 +92,47 @@ class Request {
 					'content-type': header
 				};
 			}
-			const requestTask = uni.request({
+			let beforeInfo={
 				url: this.defaultReq.url + path,
 				method: type,
 				dataType,
 				responseType,
 				data,
 				header,
-				success: ({
-					statusCode = 0,
-					..._res
-				} = {}) => {
+			}
+			let verifyBeforeInfo =await this.defaultReq.beforeSend(beforeInfo);		//用户自定义后的请求参数
+			if(!verifyBeforeInfo){
+				return reject( Object.assign(beforeInfo,{beforeClose:true}));
+			}
+			if (title) { //显示请求提示
+				uni.showLoading({
+					title,
+					mask: true,
+				});
+			}
+			const requestTask = uni.request({
+				...beforeInfo,
+				complete:async ({
+					statusCode,
+					...finsh,
+				}={}) => {
 					let callData = Object.assign({
 						extra
-					}, _res);
+					}, finsh,{statusCode});
 					if (statusCode == 200) {
-						let testRes = this.defaultReq.testFun(_res, statusCode);
-						if (testRes == undefined || testRes) {
-							return resolve(callData);
+						let verifyRes =await this.defaultReq.beforeFinsh(callData);
+						if(verifyRes){
+							resolve(verifyRes);
 						}
+					}else{
+						reject(callData)
 					}
-					return reject(callData)
-				},
-				fail: err => {
-					reject(Object.assign({
-						extra
-					}, err));
-				},
-				complete: finsh => {
 					if (title) {
 						uni.hideLoading();
 					}
-					finshFun(finsh);
 				}
 			});
-			abortFun(requestTask);
+			abortFun(beforeInfo,requestTask);
 		})
 	}
 	/**

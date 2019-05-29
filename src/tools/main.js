@@ -11,14 +11,30 @@ import ToolsdDown from './common/request/request-downFiles.js';
 
 req.baseuUrl = 'https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
 req.defaultReq.type = "POST";
-req.defaultReq.testFun = (_res, _status) => {
-	if (!_res.success) { //退出登录
+
+let timeout=function(){
+	return new Promise(resolve=>{
+		setTimeout(()=>{
+			resolve();
+		},3000)
+	})
+}
+
+req.defaultReq.beforeSend=async res=>{
+	await timeout();
+	delete res.data
+	return res;
+}
+req.defaultReq.beforeFinsh = (res, status) => {
+	if (!res.data.success) { //退出登录
 		uni.reLaunch({
 			url: 'login?userOut=true'
 		});
 	}
-	return false
+	return res
 }
+
+
 req.defaultReq.baseData = { //设置公共参数，默认为空，设置此参数后每次发送请求都会带上此参数
 	token: '000-000-000-000-player125'
 }

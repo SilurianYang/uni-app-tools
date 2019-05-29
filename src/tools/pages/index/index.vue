@@ -13,9 +13,7 @@
 </template>
 
 <script>
-	import {
-		df
-	} from "../../common/request/request-downFiles.js"
+	import {df} from "@/common/request/request-downFiles.js"
 
 	export default {
 		data() {
@@ -114,7 +112,7 @@
 			async testReq() {
 				try {
 					const res = await this.$req.ajax({
-						path: "example/query",
+						path: "example/query22",
 						title: "正在加载",
 						data: {
 							name: 'hhyang'
@@ -126,8 +124,9 @@
 						parmas1: '我是额外参数1',
 						parmas2: '我是额外参数2'
 					})
+					console.log(res)
 				} catch (e) {
-					console.log(e)
+					console.error(e)
 				}
 			}
 		}
