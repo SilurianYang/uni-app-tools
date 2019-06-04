@@ -23,7 +23,7 @@ new socket({
 	onClose: (err, sk) => {
 		console.log('关闭了连接')
 	},
-	onReload: (err, sk) => {
+	onReload: (res, sk) => {
 		console.log('重载：' + res)
 	},
 	onRdFinsh:(count,sk)=>{
