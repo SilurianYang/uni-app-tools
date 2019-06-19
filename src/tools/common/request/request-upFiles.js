@@ -17,6 +17,7 @@ import {
 class UpFiles extends RQ {
 	constructor(...arg) {
 		super(arg);
+		console.log(this)
 		this.defaultFile = _defaultFile;
 		this.FunChunk = {
 			0: this.AppSelectFiles,
@@ -24,6 +25,9 @@ class UpFiles extends RQ {
 		};
 		this.proxy(this.defaultFile, (key, value) => {
 			if (key === 'upOpenDown' && value === true) {
+				if(_down!==null){
+					return console.error(`Repeat setting ${key}`,this);
+				}
 				_down = require('./request-downFiles.js').df;
 			}
 		});

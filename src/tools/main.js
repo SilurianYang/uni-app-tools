@@ -6,11 +6,11 @@ Vue.config.productionTip = false
 import {
 	req
 } from './common/request/request.js';
-import ToolsUp from './common/request/request-upFiles.js';
 import ToolsdDown from './common/request/request-downFiles.js';
 
 req.baseuUrl = 'https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
 req.defaultReq.type = "POST";
+
 
 let timeout=function(){
 	return new Promise(resolve=>{
@@ -45,13 +45,12 @@ req.defaultUp.baseData = { //设置公共参数，默认为空，设置此参数
 }
 
 //聊天测试
-//import'./common/chat/webSocket.js';
+//import'./common/chat/useSocket.js';
 import store from "./common/chat/store.js";
 Vue.prototype.$store = store;
 //聊天测试结束
 
 Vue.prototype.$req = req;
-Vue.prototype.$ToolsUp = ToolsUp;
 Vue.config.productionTip = false;
 
 App.mpType = 'app'

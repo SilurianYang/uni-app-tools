@@ -3,7 +3,7 @@
 		<view>
 			<button type="primary" @click="testplatform">获取当前运行环境</button>
 			<button type="primary" @click="testReq">测试ajax</button>
-			<button type="primary" @click="testUp">测试上传文件</button>
+			<button type="primary"  @click="gotoPage('../upFiles/upFiles')">去上传文件页面</button>
 			<button type="primary" @click="testDown">测试下载文件</button>
 			<button type="primary" @click="testProxy">通过代理设置数据</button>
 			<button type="primary" @click="gotoPage('../customImg/customImg')">自定义图片格式</button>

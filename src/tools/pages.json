@@ -34,7 +34,11 @@
 				}
 			}
 		}
-	],
+	    ,{
+            "path" : "pages/upFiles/upFiles",
+            "style" : {}
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
