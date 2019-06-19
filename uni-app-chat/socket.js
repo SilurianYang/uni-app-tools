@@ -1,22 +1,27 @@
+const noop = function() {};
 class Socket {
 	static stopTime = 0;
+	static concatCount = 0;
 	constructor({
 		url = '',
-		onOpen = res => {},
-		onMsg = msg => {},
-		onClose = err => {},
-		onError = err => {},
-		onReload = info => {},
-		onRdFinsh = () => {},
+		onOpen = noop,
+		onMsg = noop,
+		onClose = noop,
+		onError = noop,
+		onReload = noop,
+		onRdFinsh = noop,
 		maxInterValCount = 10,
 		interValTime = 2000,
 		SocketState = {},
 		...args
 	} = {}) {
+		this.isRconnectIng = false; //是否处于重连状态
+		this.waiting = Promise.resolve(false); //心跳检查必须等待重连完成后
+		this.waitDep = []; //等待时收集依赖的容器
 		this.SocketTask = {
-			nsend: text => {},
-			nclose: t => {},
-			nrconnect: () => {},
+			nsend: noop,
+			nclose: noop,
+			nrconnect: noop,
 			isconnect: false,
 			uniColse: false,
 			maxInterValCount,
@@ -32,19 +37,44 @@ class Socket {
 			onRdFinsh,
 			extra: args
 		};
-		this._EventDispath();
-		this.STORE = SocketState.store; //当前vuex 实例
-		this.SUCCESSVAL = this.STORE.state[SocketState.success[0]]; //当前存储成功数据的对象
-		this.SUCCESSFUN = SocketState.success[1]; //当前存储成功数据的提交方法
-		this.ERRVAL = this.STORE.state[SocketState.err[0]]; //当前存储失败数据的对象
-		this.ERRFUN = SocketState.err[1]; //当前存储成功数据的提交方法
-		return this.initChat(this.SocketTask, this.SocketTask.extra);
+		this._EventDispath(this.SocketTask);
+		this.initChat(this.SocketTask, this.SocketTask.extra);
+		return this.SocketTask;
+
+	}
+	set CONCATCOUNT(value) {
+		Socket.concatCount = value;
+		if (value > 0) this._notify();
+	}
+	get CONCATCOUNT() {
+		return Socket.concatCount
+	}
+	/**
+	 * 仅供内部使用，通知所有收集到的依赖
+	 */
+	_notify() {
+		for (let i = 0; i < this.waitDep.length; i++) {
+			this.waitDep[i].call(this.SocketTask);
+		}
+		this.waitDep = [];
+	}
+	/**
+	 * 仅供内部使用，确认当前是否连接成功,收集依赖
+	 */
+	_chunkConnect(fn) {
+		if (Socket.concatCount > 0) {
+			fn();
+		} else {
+			this.waitDep.push(fn);
+		}
 	}
 	/**
 	 * 仅供内部使用，事件注册
 	 */
-	_EventDispath() {
-		let SocketTask=this.SocketTask;
+	_EventDispath({
+		onReload
+	} = {}) {
+		let SocketTask = this.SocketTask;
 		let events = {
 			onOpen: [],
 			onMsg: [],
@@ -52,6 +82,34 @@ class Socket {
 			onError: [],
 			onReload: [],
 			onRdFinsh: [],
+		}
+		SocketTask.nsend = text => {
+			this._chunkConnect(() => {
+				uni.sendSocketMessage({
+					data: text
+				})
+			})
+		}
+		SocketTask.nclose = t => {
+			this._chunkConnect(() => {
+				SocketTask.uniColse = true;
+				uni.closeSocket();
+			})
+		}
+		SocketTask.nrconnect = t => {
+			this._chunkConnect(() => {
+				this.waiting = new Promise(async (resolve) => {
+					uni.closeSocket();
+					let reloadStatus = false;
+					try {
+						const res = await this.initChat(SocketTask, SocketTask.extra);
+						reloadStatus = res;
+					} catch (e) {}
+					onReload.call(SocketTask, reloadStatus, SocketTask);
+					SocketTask.eventPatch.dispatchEvent('onReload', reloadStatus);
+					resolve(reloadStatus);
+				})
+			})
 		}
 
 		function EventDispatcher() {
@@ -67,7 +125,7 @@ class Socket {
 			let evenArr = this.events[type];
 			if (evenArr.length > 0) {
 				for (let i = 0; i < evenArr.length; i++) {
-					evenArr[i](msg,SocketTask)
+					evenArr[i].call(SocketTask, msg, SocketTask);
 				}
 			}
 		}
@@ -77,27 +135,31 @@ class Socket {
 	 * 心跳检测
 	 */
 	async hbDetection() {
-		if (this.SocketTask.uniColse) {
+		const SocketTask = this.SocketTask;
+		if (SocketTask.uniColse) {
 			return false;
 		}
 		clearTimeout(Socket.stopTime);
-		if (!this.SocketTask.isconnect) { //未连接则启动连接
-			try {
-				if (this.SocketTask.maxInterValCount > this.SocketTask.InterValCount) {
-					Socket.stopTime = setTimeout(async () => {
-						this.SocketTask.InterValCount++;
-						await this.initChat(this.SocketTask, this.SocketTask.extra);
+		if (!SocketTask.isconnect) { //未连接则启动连接
+			if (SocketTask.maxInterValCount > SocketTask.InterValCount) {
+				Socket.stopTime = setTimeout(async () => {
+					try {
+						const R_result = await this.waiting;
+						if (R_result) return;
+						this.isRconnectIng = true;
+						const openResult = await this.initChat(SocketTask, SocketTask.extra);
+						if (openResult) return;
+						SocketTask.InterValCount++;
 						return this.hbDetection();
-					}, this.SocketTask.interValTime)
-				} else {
-					this.SocketTask.onRdFinsh(this.SocketTask.maxInterValCount, this.SocketTask);
-					this.SocketTask.eventPatch.dispatchEvent('onRdFinsh',this.SocketTask.maxInterValCount);
-				}
-			} catch (e) {
-				console.log(JSON.stringify(e))
+					} catch (e) {
+						return this.hbDetection();
+					}
+				}, SocketTask.interValTime)
+			} else {
+				SocketTask.onRdFinsh.call(SocketTask, SocketTask.maxInterValCount, SocketTask);
+				SocketTask.eventPatch.dispatchEvent('onRdFinsh', SocketTask.maxInterValCount);
 			}
 		}
-
 	}
 	/**
 	 * websocket监听事件
@@ -107,84 +169,44 @@ class Socket {
 		onMsg,
 		onClose,
 		onError,
-		onReload
+		onReload,
 	} = {}) {
-		return new Promise(async (resolve, reject) => {
-			uni.onSocketOpen((res = '{}') => {
-				this.SocketTask.isconnect = true;
-				this.SocketTask.InterValCount = 0;
-				this.SocketTask.uniColse = false;
-				if (typeof res !== "object") {
-					res = JSON.parse(JSON.stringify(res));
-				}
-				resolve();
-				onOpen(res, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onOpen', res)
+		return new Promise((resolve, reject) => {
+			const SocketTask = this.SocketTask;
+			uni.onSocketOpen(res => {
+				this.CONCATCOUNT += 1;
+				this.isRconnectIng = false;
+				SocketTask.isconnect = true;
+				SocketTask.InterValCount = 0;
+				SocketTask.uniColse = false;
+				resolve(true);
+				onOpen.call(SocketTask, res, SocketTask);
+				SocketTask.eventPatch.dispatchEvent('onOpen', res)
 			})
-			uni.onSocketMessage((msg = '{}') => {
-				if (typeof msg.data !== "object") {
-					msg = JSON.parse(msg.data);
-				}
-				let key = Object.keys(msg)[0];
-				let newMsg = [];
-				if (key) {
-					newMsg = JSON.parse(JSON.stringify(this.SUCCESSVAL[key] || []));
-					newMsg.push(msg[key]);
-				}
-				this.SUCCESSVAL[key] = newMsg;
-				this.STORE.commit(this.SUCCESSFUN, Object.assign({},this.SUCCESSVAL));
-				onMsg(msg, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onMsg',msg)
+			uni.onSocketMessage(msg => {
+				onMsg.call(SocketTask, msg, SocketTask);
+				SocketTask.eventPatch.dispatchEvent('onMsg', msg)
 			})
-			uni.onSocketClose((err = '{}') => {
-				this.SocketTask.isconnect = false;
-				this.hbDetection();
-				if (typeof err !== "object") {
-					err = JSON.parse(err);
+			uni.onSocketClose(async err => {
+				SocketTask.isconnect = false;
+				resolve(false);
+				if (!this.isRconnectIng) {
+					this.hbDetection();
+					onClose.call(SocketTask, err, SocketTask);
+					SocketTask.eventPatch.dispatchEvent('onClose', err);
 				}
-				this.STORE.commit(this.ERRFUN, Object.assign({}, this.ERRVAL, err));
-				reject(err);
-				onClose(err, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onClose', err)
 			})
-			uni.onSocketError((err = '{}') => {
+			uni.onSocketError(err => {
 				uni.closeSocket();
-				if (typeof err !== "object") {
-					err = JSON.parse(err);
-				}
-				this.STORE.commit(this.ERRFUN, Object.assign({}, this.ERRVAL, err));
-				reject(err);
-				onError(err, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onError',err)
+				onError.call(SocketTask, err, SocketTask);
+				SocketTask.eventPatch.dispatchEvent('onError', err)
 			})
-			this.SocketTask.nsend = text => {
-				uni.sendSocketMessage({
-					data: text
-				})
-			}
-			this.SocketTask.nclose = t => {
-				this.SocketTask.uniColse = true;
-				uni.closeSocket();
-			}
-			this.SocketTask.nrconnect = async t => {
-				this.SocketTask.uniColse = true;
-				uni.closeSocket();
-				let reloadStatus = false;
-				try {
-					await this.initChat(this.SocketTask, this.SocketTask.extra);
-					reloadStatus = true
-				} catch (e) {
-					console.log(JSON.stringify(e))
-				}
-				onReload(reloadStatus, this.SocketTask);
-				this.SocketTask.eventPatch.dispatchEvent('onReload',reloadStatus)
-			}
 		})
 	}
 	/**
 	 * 开始初始化chat
 	 */
-	async initChat({
+	initChat({
 		url,
 		onOpen,
 		onMsg,
@@ -192,18 +214,21 @@ class Socket {
 		onError,
 		onReload
 	} = {}, args) {
-		return new Promise((resolve, reject) => {
-			Promise.all([this.connectSocket(url, args), this.SocketEvents({
-				onOpen,
-				onMsg,
-				onClose,
-				onError,
-				onReload
-			})]).then(res => {
-				resolve(this.SocketTask);
-			}).catch(err => {
+		return new Promise(async (resolve, reject) => {
+			try {
+				await this.connectSocket(url, args);
+				let res = await this.SocketEvents({
+					onOpen,
+					onMsg,
+					onClose,
+					onError,
+					onReload,
+				})
+				resolve(res);
+			} catch (e) {
+				console.log(e)
 				reject();
-			})
+			}
 		})
 	}
 	/**
@@ -213,11 +238,11 @@ class Socket {
 		return new Promise((resolve, reject) => {
 			uni.connectSocket({
 				url,
-				success: res => {
-					resolve(res);
+				success: () => {
+					resolve();
 				},
 				fail: err => {
-					reject(err);
+					reject();
 				},
 				...args
 			})
