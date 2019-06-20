@@ -50,6 +50,12 @@ import store from "./common/chat/store.js";
 Vue.prototype.$store = store;
 //聊天测试结束
 
+//自定义事件引入
+import event from './common/uni-app-customEvent/custom-event.js'
+const Event=new event();
+Vue.prototype.$event=Event;
+//自定义事件引入结束
+
 Vue.prototype.$req = req;
 Vue.config.productionTip = false;
 

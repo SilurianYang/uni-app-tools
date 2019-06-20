@@ -7,6 +7,7 @@
 			<button type="primary" @click="testDown">测试下载文件</button>
 			<button type="primary" @click="testProxy">通过代理设置数据</button>
 			<button type="primary" @click="gotoPage('../customImg/customImg')">自定义图片格式</button>
+			<button type="primary" @click="gotoPage('../customEvent/customEvent')">自定义事件</button>
 			<button type="warn" @click="gotoPage('../chat/chat')">聊天测试</button>
 		</view>
 	</view>
@@ -25,7 +26,11 @@
 			uni.stopPullDownRefresh();
 		},
 		onLoad() {
-
+			this.$event.on('test',(title)=>{
+				uni.showToast({
+					title,
+				})
+			})
 			// #ifdef APP-PLUS
 			plus.navigator.closeSplashscreen();
 			// #endif

@@ -38,6 +38,10 @@
             "path" : "pages/upFiles/upFiles",
             "style" : {}
         }
+        ,{
+            "path" : "pages/customEvent/customEvent",
+            "style" : {}
+        }
     ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
