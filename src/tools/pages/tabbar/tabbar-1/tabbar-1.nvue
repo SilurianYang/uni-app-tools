@@ -1,0 +1,54 @@
+<template>
+	<view>
+		<div class="page">
+			<h1 class="h1">
+				<text>tabbar1</text>
+			</h1>
+			<h1 class="h1">
+				<text>tabbar1</text>
+			</h1>
+			<h1 class="h1">
+				<text>tabbar1</text>
+			</h1>
+			<h1 class="h1">
+				<text>tabbar1</text>
+			</h1>
+			<h1 class="h1">
+				<text>tabbar1</text>
+			</h1>
+			<h1 class="h1">
+				<text>tabbar1</text>
+			</h1>
+			<h1 class="h1">
+				<text>tabbar1</text>
+			</h1>
+			
+		</div>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+
+			};
+		},
+		created() {
+			
+			//this.$draw.renderTabBar(this.$mp.page.$getAppWebview(), 'tabbar1');
+		}
+	}
+</script>
+
+<style>
+.page{
+	height: 100vh;
+	overflow-y: scroll;
+}
+.h1{
+	background-color: #f00;
+	height: 200px;
+	margin-bottom: 20px;
+}
+</style>

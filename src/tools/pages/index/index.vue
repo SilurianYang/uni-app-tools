@@ -9,6 +9,7 @@
 			<button type="primary" @click="gotoPage('../customImg/customImg')">自定义图片格式</button>
 			<button type="primary" @click="gotoPage('../customEvent/customEvent')">自定义事件</button>
 			<button type="warn" @click="gotoPage('../chat/chat')">聊天测试</button>
+			<button type="warn" @click="gotoPage('../tabbar/tabbar')">自定义原生tabbar</button>
 		</view>
 	</view>
 </template>

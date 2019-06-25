@@ -1,0 +1,25 @@
+<template>
+	<view>
+		<h1><text>tabbar4</text></h1>
+	</view>
+</template>
+
+<script>
+	export default {
+		data() {
+			return {
+				
+			}
+		},
+		created() {
+			//this.$draw.renderTabBar(this.$mp.page.$getAppWebview(), 'tabbar4');
+		},
+		methods: {
+			
+		}
+	}
+</script>
+
+<style>
+
+</style>

@@ -1,6 +1,5 @@
 {
-	"pages": [
-		{
+	"pages": [{
 			"path": "pages/index/index",
 			"style": {
 				"app-plus": {
@@ -11,7 +10,7 @@
 		{
 			"path": "pages/customImg/customImg",
 			"style": {
-				"navigationBarTitleText":"自定义图片格式",
+				"navigationBarTitleText": "自定义图片格式",
 				"app-plus": {
 					"bounce": "none"
 				}
@@ -22,7 +21,7 @@
 			"style": {
 				"app-plus": {
 					"bounce": "none",
-					"softinputNavBar":"none"
+					"softinputNavBar": "none"
 				}
 			}
 		},
@@ -33,16 +32,50 @@
 					"bounce": "none"
 				}
 			}
+		}, {
+			"path": "pages/upFiles/upFiles",
+			"style": {}
+		}, {
+			"path": "pages/customEvent/customEvent",
+			"style": {}
+		}, {
+			"path": "pages/tabbar/tabbar",
+			"style": {
+				"app-plus": {
+					"bounce":"none",
+					"subNVues": [{
+							"id": "tabbar1",
+							"path": "pages/tabbar/tabbar-1/tabbar-1",
+							"style": {
+								"position": "static"
+							}
+						},
+						{
+							"id": "tabbar2",
+							"path": "pages/tabbar/tabbar-2/tabbar-2",
+							"style": {
+								"position": "static"
+							}
+						},
+						{
+							"id": "tabbar3",
+							"path": "pages/tabbar/tabbar-3/tabbar-3",
+							"style": {
+								"position": "static"
+							}
+						},
+						{
+							"id": "tabbar4",
+							"path": "pages/tabbar/tabbar-4/tabbar-4",
+							"style": {
+								"position": "static"
+							}
+						}
+					]
+				}
+			}
 		}
-	    ,{
-            "path" : "pages/upFiles/upFiles",
-            "style" : {}
-        }
-        ,{
-            "path" : "pages/customEvent/customEvent",
-            "style" : {}
-        }
-    ],
+	],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",

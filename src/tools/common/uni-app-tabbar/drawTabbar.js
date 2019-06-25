@@ -1,12 +1,20 @@
 class Draw {
 	constructor({
 		allListKeys = [],
+		repeatTo = false,
+		navigateTo = ({
+			pagePath
+		} = {}) => {
+			uni.switchTab({
+				url: pagePath
+			});
+		},
 		bottom = '0px',
 		dock = 'bottom',
 		height = '56px',
 		left = '0px',
 		opacity = 1,
-		position ='dock' ,
+		position = 'dock',
 		width = '100%',
 		borderStyle = '#eaeaea',
 		backgroundColor = '#FFFFFF',
@@ -27,6 +35,7 @@ class Draw {
 	} = {}) {
 		this.config = {
 			allListKeys,
+			navigateTo,
 			bottom,
 			dock,
 			height,
@@ -42,9 +51,9 @@ class Draw {
 			Bitmap,
 			font,
 			list,
-			device:plus.device.vendor
+			device: plus.device.vendor
 		}
-		this.config.position=this.config.device === 'Apple' ? 'dock' : 'absolute';		//兼容安卓手机
+		this.config.position = this.config.device === 'Apple' ? 'dock' : 'absolute'; //兼容安卓手机
 
 		Object.defineProperty(this.config, 'currentIndex', {
 			set: (val) => {
@@ -75,8 +84,8 @@ class Draw {
 	/**
 	 * 创建画板,并返回一个自定义位置的画板
 	 */
-	createView() {
-		let view = new plus.nativeObj.View(`HHYANGVIEW${this._uid}`, {
+	createView(index) {
+		let view = new plus.nativeObj.View(`HHYANGVIEW${index}`, {
 			bottom: this.config.bottom,
 			left: this.config.left,
 			opacity: this.config.opacity,
@@ -99,17 +108,13 @@ class Draw {
 	/**
 	 * 绘制指定tabbar
 	 */
-	draw(doClick = false, oldView = plus.nativeObj.View.getViewById(`HHYANGVIEW${this._uid-1}`), currentKey = this.config.list[
-		0].key) {
-		let view = this.createView();
+	draw(currentKey = this.config.list[0].key,index) {
+		let view = this.createView(index);
 		for (let i = 0; i < this.allLength; i++) {
-			this.updateSingleView(view, i, currentKey, this.d_width);
+			this.updateSingleView(view, i, currentKey, this.d_width,index);
 		}
 		this.addEvents(view, this.d_width);
 
-		if (doClick && oldView) {
-			oldView.close();
-		}
 		return view
 	}
 	/**
@@ -121,20 +126,19 @@ class Draw {
 			let key = this.config.allListKeys[i];
 			list[key] = {
 				index: i,
-				val: this.draw(false, undefined, key)
+				val: this.draw(key,i)
 			};
 		}
 		this.injectList = list;
-		return list;
+		return this.injectList;
 	}
 	/**
 	 * 渲染指定页面的bar
 	 */
 	renderTabBar(page, key) {
 		uni.hideTabBar();
-
+		
 		let injectList = this.injectList[key];
-
 		if (!injectList) {
 			return false;
 		}
@@ -144,10 +148,10 @@ class Draw {
 			injectList = this.injectList[key];
 		}
 		page.append(injectList.val);
-		if(this.config.device!== 'Apple' ){		//安卓手机需要兼容一下
+		if (this.config.device !== 'Apple') { //安卓手机需要兼容一下
 			page.setStyle({
-				position:'dock',
-				bottom:this.config.height
+				position: 'dock',
+				bottom: this.config.height
 			})
 		}
 	}
@@ -155,25 +159,25 @@ class Draw {
 	 * 隐藏底部
 	 */
 	hideTabBar() {
-		
+
 	}
 	/**
 	 * 显示底部菜单
 	 */
 	showTabBar() {
-		
+
 	}
 	/**
 	 * 销毁底部菜单
 	 */
 	destroyTabBar() {
-		
+
 	}
 	/**
 	 * 重置绘制的内容
 	 */
 	resetTabBarView() {
-		
+
 	}
 	/**
 	 * @param {Object} view
@@ -182,32 +186,32 @@ class Draw {
 	 * @param {Object} d_width 
 	 * 修改单个按钮样式
 	 */
-	updateSingleView(view, i, currentKey, d_width) {
-		let item = this.config.list[i];
+	updateSingleView(view, i, currentKey, d_width,index) {
+		const config = this.config;
+		let item = config.list[i];
 		if (!item) {
 			return false;
 		}
-		let left = d_width / 2 - parseInt(this.config.Bitmap.size) / 2;
-		let text_top = parseInt(this.config.height) / 2 + parseInt(this.config.font.size) / 2 + 'px';
+		let left = d_width / 2 - parseInt(config.Bitmap.size) / 2;
+		let text_top = parseInt(config.height) / 2 + parseInt(config.font.size) / 2 + 'px';
 		view.drawText(item.text, {
 			width: d_width,
 			left: i * d_width,
-			height: this.config.height,
+			height: config.height,
 			top: plus.device.vendor === 'Apple' ? text_top : '12px',
 		}, {
-			align: this.config.font.align,
-			color: item.key == currentKey ? this.config.selectedColor : this.config.color,
-			overflow: this.config.font.overflow,
-			size: this.config.font.size,
-			verticalAlign: this.config.font.verticalAlign
+			align: config.font.align,
+			color: item.key == currentKey ? config.selectedColor : config.color,
+			overflow: config.font.overflow,
+			size: config.font.size,
+			verticalAlign: config.font.verticalAlign
 		});
-
 		let iconPath = item.key == currentKey ? `_www/${item.selectedIconPath}` : `_www/${item.iconPath}`;
 		view.drawBitmap(iconPath, {}, {
-			top: this.config.Bitmap.top,
+			top: config.Bitmap.top,
 			left: i * d_width + left,
-			width: this.config.Bitmap.size,
-			height: this.config.Bitmap.size
+			width: config.Bitmap.size,
+			height: config.Bitmap.size
 		});
 
 	}
@@ -216,18 +220,21 @@ class Draw {
 	 * @param {Object} page
 	 * 合并原生的样式
 	 */
-	mergeOptions(style,page){
-		if(this.config.device !== 'Apple'){		//安卓手机
-			let p_options=page.getStyle();
-			return Object.assign({},p_options,style,{position:'dock',bottom:this.config.height});
+	mergeOptions(style, page) {
+		if (this.config.device !== 'Apple') { //安卓手机
+			let p_options = page.getStyle();
+			return Object.assign({}, p_options, style, {
+				position: 'dock',
+				bottom: this.config.height
+			});
 		}
 		return style;
 	}
 	/**
 	 * 重新原生的setStyle 因为在安卓会出你意想不到的问题，贼难受
 	 */
-	setStyle(style,page){
-		let options=this.mergeOptions(style,page);
+	setStyle(style, page) {
+		let options = this.mergeOptions(style, page);
 		page.setStyle(options);
 	}
 	/**
@@ -238,19 +245,16 @@ class Draw {
 			let {
 				clientX
 			} = e;
+			const config = this.config;
 			let index = Math.ceil(clientX / d_width) - 1;
-			// if (this.config.currentIndex == index) { //在相同的页面不做跳转
+			const currList=config.list[index];
+				
+			// if (!config.repeatTo && config.currentIndex==index) {
 			// 	return false;
 			// }
-			let oldIndex = this.config.currentIndex; //点击之前的位置
-			this.config.currentIndex = index;
-			let url = this.config.list[index].pagePath; //获取需要跳转的页面地址
-			// this.updateSingleView(view,index,index,d_width);		//更新点击的位置，图片字体加颜色。
-			// this.updateSingleView(view,oldIndex,index,d_width);		//更新点击之前的样式，恢复默认。
-			//this.draw(true, view);
-			uni.switchTab({
-				url
-			});
+			// 
+			// config.currentIndex = index;
+			this.config.navigateTo.call(this, currList,config.list,config.allListKeys);
 		}, false);
 	}
 

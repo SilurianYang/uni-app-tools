@@ -56,6 +56,13 @@ const Event=new event();
 Vue.prototype.$event=Event;
 //自定义事件引入结束
 
+//自定义tabbar引入
+import {draw} from './common/uni-app-tabbar/useTabbar.js'
+Vue.prototype.$draw=draw;
+//自定义tabbar引入结束
+
+
+
 Vue.prototype.$req = req;
 Vue.config.productionTip = false;
 
