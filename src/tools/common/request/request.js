@@ -79,7 +79,6 @@ class Request {
 		type = this.defaultReq.type, //请求类型 默认为'GET'
 		dataType = this.defaultReq.dataType, //返回数据类型，默认为json。会对返回数据做一个JSON.parse
 		responseType = this.defaultReq.responseType, //设置响应的数据类型默认为'text'
-		finshFun = _f => {},
 		abortFun = _bt => {}
 	} = {}, ...extra) {
 		return new Promise(async (resolve, reject) => {
@@ -146,10 +145,12 @@ class Request {
 		filePath = '',
 		fileName = '',
 		extra = {},
-		reload = bt => {},
+		abort = bt => {},
 		_isFirst = true,
-		_autoClose = true
+		_autoClose = true,
+		...args
 	} = {}) {
+		Object.assign(extra,this.defaultUp.baseData);
 		return new Promise((resolve, reject) => {
 			if (title && _isFirst) { //显示请求提示
 				uni.showLoading({
@@ -157,8 +158,10 @@ class Request {
 					mask: true,
 				});
 			}
+			const url=this.defaultUp.url + path;
+			let beforeInfo=Object.assign({},{path:url,header,filePath,fileName,extra,args})
 			const uploadTask = uni.uploadFile({
-				url: this.defaultUp.url + path,
+				url,
 				filePath,
 				name: fileName,
 				header,
@@ -176,7 +179,7 @@ class Request {
 					return reject(finsh);
 				}
 			});
-			reload(uploadTask);
+			abort(beforeInfo,uploadTask);
 		})
 	}
 	/**
@@ -219,13 +222,13 @@ class Request {
 					return reject(finsh)
 				},
 			})
-			abort(downloadTask,{
+			abort({
 				abort,
 				path,
 				title,
 				index,
 				...extra
-			});
+			},downloadTask);
 		})
 	}
 	/**

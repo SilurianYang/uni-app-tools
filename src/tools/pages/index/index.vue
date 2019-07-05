@@ -9,14 +9,14 @@
 			<button type="primary" @click="gotoPage('../customImg/customImg')">自定义图片格式</button>
 			<button type="primary" @click="gotoPage('../customEvent/customEvent')">自定义事件</button>
 			<button type="warn" @click="gotoPage('../chat/chat')">聊天测试</button>
+			<!-- #ifdef APP-PLUS -->
 			<button type="warn" @click="gotoPage('../tabbar/tabbar')">自定义原生tabbar</button>
+			<!-- #endif -->
 		</view>
 	</view>
 </template>
 
 <script>
-	import {df} from "@/common/request/request-downFiles.js"
-
 	export default {
 		data() {
 			return {
@@ -78,7 +78,7 @@
 				console.log(type);
 			},
 			async testDown() {
-				const res = await df.startDownFiles({
+				const res = await this.$req.startDownFiles({
 					// path: 'http://localhost:10086/static/hhyang.txt',
 					path: 'http://192.168.0.29:10086/static/hhyang.txt,http://192.168.0.29:10086/static/cxq.jpg',
 					//path: ['http://192.168.0.29:10086/static/hhyang.txt', 'http://192.168.0.29:10086/static/cxq.jpg'],
@@ -118,13 +118,13 @@
 			async testReq() {
 				try {
 					const res = await this.$req.ajax({
-						path: "example/query22",
+						path: "example/query",
 						title: "正在加载",
 						data: {
 							name: 'hhyang'
 						},
-						abortFun: bt => {
-							//bt.abort();
+						abortFun: (info,bt) => {
+							bt.abort();
 						},
 					}, {
 						parmas1: '我是额外参数1',

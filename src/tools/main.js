@@ -3,13 +3,12 @@ import App from './App'
 
 Vue.config.productionTip = false
 
-import {
-	req
-} from './common/request/request.js';
-import ToolsdDown from './common/request/request-downFiles.js';
+import {df}  from './common/request/request-downFiles.js';
 
-req.baseuUrl = 'https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
-req.defaultReq.type = "POST";
+import rup  from '@/common/request/request-upFiles.js';
+
+df.baseuUrl = 'https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
+df.defaultReq.type = "POST";
 
 
 let timeout=function(){
@@ -20,12 +19,12 @@ let timeout=function(){
 	})
 }
 
-req.defaultReq.beforeSend=async res=>{
-	await timeout();
-	delete res.data
+df.defaultReq.beforeSend=async res=>{
+	// await timeout();
+	// delete res.data
 	return res;
 }
-req.defaultReq.beforeFinsh = (res, status) => {
+df.defaultReq.beforeFinsh = (res, status) => {
 	if (!res.data.success) { //退出登录
 		uni.reLaunch({
 			url: 'login?userOut=true'
@@ -35,12 +34,12 @@ req.defaultReq.beforeFinsh = (res, status) => {
 }
 
 
-req.defaultReq.baseData = { //设置公共参数，默认为空，设置此参数后每次发送请求都会带上此参数
+df.defaultReq.baseData = { //设置公共参数，默认为空，设置此参数后每次发送请求都会带上此参数
 	token: '000-000-000-000-player125'
 }
 //上传测试工程
-// req.defaultUp.url='https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
-req.defaultUp.baseData = { //设置公共参数，默认为空，设置此参数后每次发送请求都会带上此参数
+rup.defaultUp.url='https://www.easy-mock.com/mock/5ca6ec41215a7b66ff10343d/'
+rup.defaultUp.baseData = { //设置公共参数，默认为空，设置此参数后每次发送请求都会带上此参数
 	token: '000-000-000-000-defaultUp'
 }
 
@@ -63,7 +62,8 @@ Vue.prototype.$draw=draw;
 
 
 
-Vue.prototype.$req = req;
+Vue.prototype.$req = df;
+Vue.prototype.$rup = rup;
 Vue.config.productionTip = false;
 
 App.mpType = 'app'
