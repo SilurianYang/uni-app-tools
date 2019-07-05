@@ -24,6 +24,9 @@ class UpFiles extends RQ {
 		};
 		this.proxy(this.defaultFile, (key, value) => {
 			if (key === 'upOpenDown' && value === true) {
+				if (_down !== null) {
+					return console.error(`'${key}' property is set repeatedly`, this);
+				}
 				_down = require('./request-downFiles.js').df;
 			}
 		});
@@ -37,43 +40,46 @@ class UpFiles extends RQ {
 		files = [],
 		isUp = true,
 		title = false,
-		showProgress=false,
-		extra = {}
+		_ADMININDEX=null,	
+		extra = {},
+		...args
 	} = {}, res) {
 		return new Promise(async (resolve, reject) => {
-			try {
-				if (isUp) { //需要上传到服务器，然后再返回
-					if (title) {
-						uni.showLoading({
-							title,
-							mask: true,
-						});
-					}
-					for (let i = 0; i < res.length; i++) {
-						if (showProgress) {
-							title = `${(i+1)}/${res.length}`
-						}
-						let fileName = files[i] != undefined ? files[i] : files[files.length - 1];
-						let upres = await this.ajaxFile({
-							path: path,
-							title: false,
-							filePath: res[i],
-							fileName,
-							extra: extra
-						});
-					}
-					if (title) {
-						uni.hideLoading();
-					}
-					resolve({
-						upload: true
+			let upres = [];
+			if (isUp) { //需要上传到服务器，然后再返回
+				if (title) {
+					uni.showLoading({
+						title,
+						mask: true,
 					});
 				}
-				return resolve(res);
-			} catch (e) {
-				uni.hideLoading();
-				reject(e);
+				for (let i = 0; i < res.length; i++) {
+					let fileName = files[i] != undefined ? files[i] : files[files.length - 1];
+					try {
+						upres.push(
+							await this.ajaxFile({
+								index: _ADMININDEX||i,
+								path: path,
+								title: false,
+								filePath: res[i],
+								fileName,
+								extra,
+								...args
+							})
+						)
+					} catch (e) {
+						upres.push(e)
+					}
+				}
+				if (title) {
+					uni.hideLoading();
+				}
+				resolve({
+					uploaded: true,
+					upres
+				});
 			}
+			return resolve(res);
 		})
 	}
 	/**
@@ -84,28 +90,44 @@ class UpFiles extends RQ {
 		netPath = '',
 		upPath = '',
 		files = [],
-		abort = (bt, finsh) => {},
+		abort = (finsh,bt) => {},
 		title = false,
-		...extra
+		extra = {},
+		...args
 	} = {}) {
 		return new Promise(async (resolve, reject) => {
-			const res = await _down.startDownFiles({
-				path: netPath,
-				abort,
-				...extra
-			});
-			try {
-				const uploadRes = await this.startUpFiles({
-					path: upPath,
-					files,
-					isUp: true,
-					title,
-					extra
-				}, res.FilePath);
-				resolve(uploadRes);
-			} catch (e) {
-				reject(e);
+			const obj = {
+				uploaded: true,
+				upres:[],
+			};
+			if(netPath.constructor===String){
+				netPath = netPath.split(',');
 			}
+			if(upPath.constructor===String){
+				upPath=upPath.split(',');
+			}
+			for (let i = 0; i < netPath.length; i++) {
+				try {
+					const res = await _down.startDownFiles({
+						path: [netPath[i]],
+						...args
+					});
+					const uploadRes = await this.startUpFiles({
+						path: upPath[i]||upPath[upPath.length-1],
+						_ADMININDEX:i,
+						files,
+						isUp: true,
+						abort,
+						title,
+						extra,
+						...args
+					}, res.FilePath);
+					obj.upres.push(uploadRes.upres[0])
+				} catch (e) {
+					obj.upres.push(e)
+				}
+			}
+			resolve(obj);
 		})
 	}
 	/**
@@ -114,15 +136,17 @@ class UpFiles extends RQ {
 	 */
 	selectFiles({
 		type = 2,
+		isUp=true,
 		maximum = 1,
 		multiple = true,
 		sizeType = ['original', 'compressed'],
-		sourceType = ['album'],
+		sourceType = ['album','camera'],
 		upload = {
 			path: '',
 			files: [],
 			isUp: false,
 			title: false,
+			abort: bt => {},
 			extra: {}
 		},
 		...extra
@@ -137,6 +161,9 @@ class UpFiles extends RQ {
 				...extra,
 			}
 			const res = await this.FunChunk[this.platform](merge);
+			if(!isUp){
+				return resolve(res);
+			}
 			try {
 				const uploadRes = await this.startUpFiles(upload, res);
 				resolve(uploadRes);

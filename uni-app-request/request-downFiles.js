@@ -28,7 +28,9 @@ class DonwFiles extends RQ {
 					mask: true,
 				});
 			}
-			path = path.toString().split(',');
+			if(path.constructor===String){
+				path = path.toString().split(',');
+			}
 			for (let i = 0; i < path.length; i++) {
 				let url = path[i];
 				try {
