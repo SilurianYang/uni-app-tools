@@ -3,12 +3,15 @@
 		<view>
 			<button type="primary" @click="testplatform">获取当前运行环境</button>
 			<button type="primary" @click="testReq">测试ajax</button>
-			<button type="primary"  @click="gotoPage('../upFiles/upFiles')">去上传文件页面</button>
+			<button type="primary" @click="gotoPage('../upFiles/upFiles')">去上传文件页面</button>
 			<button type="primary" @click="testDown">测试下载文件</button>
 			<button type="primary" @click="testProxy">通过代理设置数据</button>
 			<button type="primary" @click="gotoPage('../customImg/customImg')">自定义图片格式</button>
 			<button type="primary" @click="gotoPage('../customEvent/customEvent')">自定义事件</button>
 			<button type="warn" @click="gotoPage('../chat/chat')">聊天测试</button>
+			
+			<button type="warn" @click="gotoPageTest('../router/router')">路由测试</button>
+			
 			<!-- #ifdef APP-PLUS -->
 			<button type="warn" @click="gotoPage('../tabbar/tabbar')">自定义原生tabbar</button>
 			<!-- #endif -->
@@ -27,7 +30,12 @@
 			uni.stopPullDownRefresh();
 		},
 		onLoad() {
-			this.$event.on('test',(title)=>{
+			
+			
+			console.log(this);
+			console.log(this.$Route)
+			
+			this.$event.on('test', (title) => {
 				uni.showToast({
 					title,
 				})
@@ -60,6 +68,12 @@
 					url
 				});
 			},
+			gotoPageTest(url){
+				this.$Router.push({name:'router',params:{id:666}});
+				//this.$Router.push({name:'router'});
+				//this.$Router.push({path:'/pages/router/router',query:{id:9999}});
+				//this.$Router.push('/pages/router/router');
+			},
 			testProxy() {
 				let proxyData = {
 					name: 'hhyang',
@@ -82,9 +96,9 @@
 					// path: 'http://localhost:10086/static/hhyang.txt',
 					path: 'http://192.168.0.29:10086/static/hhyang.txt,http://192.168.0.29:10086/static/cxq.jpg',
 					//path: ['http://192.168.0.29:10086/static/hhyang.txt', 'http://192.168.0.29:10086/static/cxq.jpg'],
-					title:'正在下载',
-					abort: (bt,params) => {
-						if(params.index==0){
+					title: '正在下载',
+					abort: (bt, params) => {
+						if (params.index == 0) {
 							bt.abort();
 						}
 						bt.onProgressUpdate(ps => {
@@ -93,7 +107,7 @@
 							console.log('预期需要下载的数据总长度' + ps.totalBytesExpectedToWrite);
 						})
 					},
-					
+
 				})
 				console.log(res)
 			},
@@ -123,7 +137,7 @@
 						data: {
 							name: 'hhyang'
 						},
-						abortFun: (info,bt) => {
+						abortFun: (info, bt) => {
 							bt.abort();
 						},
 					}, {

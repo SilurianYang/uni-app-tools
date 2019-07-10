@@ -75,7 +75,11 @@
 				}
 			}
 		}
-	],
+	    ,{
+            "path" : "pages/router/router",
+            "style" : {}
+        }
+    ],
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "uni-app",
