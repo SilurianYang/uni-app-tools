@@ -2,11 +2,9 @@ import Vue from 'vue'
 import App from './App'
 
 import {updateurl} from './common/base.js'
-
-Vue.config.productionTip = false
-
 Vue.prototype.$updateurl = updateurl;
 
+Vue.config.productionTip = false
 
 App.mpType = 'app'
 

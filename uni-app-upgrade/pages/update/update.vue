@@ -4,6 +4,7 @@
       <div class="logo"></div>
       <div id="bottom_progressbar">
         <p class="progressbar_text">{{ text }}</p>
+				<!-- 进度条开始 可自行替换 -->
         <view class="progress-box">
           <progress
             :percent="upgrade"
@@ -13,6 +14,7 @@
             class="progress"
           />
         </view>
+				<!-- 进度条结束 -->
       </div>
     </div>
   </view>
