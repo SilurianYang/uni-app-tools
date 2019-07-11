@@ -69,10 +69,10 @@
 				});
 			},
 			gotoPageTest(url){
-				this.$Router.push({name:'router',params:{id:666}});
-				//this.$Router.push({name:'router'});
-				//this.$Router.push({path:'/pages/router/router',query:{id:9999}});
-				//this.$Router.push('/pages/router/router');
+				this.$Router.replaceAll({name:'router1',params:{id:666}});
+				//this.$Router.push({name:'router1'});
+				//this.$Router.push({path:'/pages/router/router1/router1',query:{id:9999}});
+				//this.$Router.push('/pages/router/router1/router1');
 			},
 			testProxy() {
 				let proxyData = {

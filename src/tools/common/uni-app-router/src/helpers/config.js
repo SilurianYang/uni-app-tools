@@ -7,7 +7,8 @@ export const methods = {
 }
 export const lifeCycle={
 	beforeHooks:[],
-	afterHooks:[]
+	afterHooks:[],
+	routerHooks:[]
 };	
 
 export const route=function(object={}){

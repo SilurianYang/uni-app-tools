@@ -66,9 +66,10 @@ export const exactRule = function(cloneRule, routes,ruleKey,getRule=false) {
 export const normalizeParams = function(cloneRule, routes) {
 	let params = {};
 	if (cloneRule.constructor === String) {
-		params.url = cloneRule;
-		params.query='';
-		return params;
+		let rule={};
+		rule.path = cloneRule;
+		rule.query={};
+		cloneRule=rule;
 	}
 	params = cloneRule['path'] && parseQuery('path', cloneRule['query'] || {}) || cloneRule['name'] && parseQuery(
 		'name', cloneRule['params'] || {});

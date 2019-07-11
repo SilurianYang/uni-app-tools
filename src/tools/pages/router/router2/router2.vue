@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<p>路由测试</p>
+		<h1>这是路由2页面</h1>
 	</view>
 </template>
 
@@ -9,15 +9,17 @@
 		data() {
 			return {
 				
-			};
+			}
 		},
 		onLoad() {
-			console.log(this)
-			console.log(this.$Route)
+			//console.log(this.$Route)
+		},
+		methods: {
+			
 		}
 	}
 </script>
 
-<style lang="scss">
+<style>
 
 </style>

@@ -67,27 +67,42 @@ Vue.use(Router);
 const router=new Router({
 	routes:[
 		{
-			path:'/pages/router/router',
-			name:'router',
-			beforeEnter:()=>{
-				
-			}
+			path:'/pages/router/router1/router1',
+			name:'router1',
 		},
 		{
 			path:'/pages/index/index',
 			name:'index',
-			beforeEnter:()=>{
-				
+		},{
+			path:'/pages/router/router2/router2',
+			name:'router2',
+			beforeEnter:(to, from, next)=>{
+				console.log(from)
+				console.log(to)
+				next();
 			}
 		}
 	]
 });
-console.log(router)
 router.beforeEach((to, from, next) => {
-  console.log(to)
-  console.log(from)
-  next(false);
+	
+	// console.log(from)
+ //    console.log(to)
+ //  
+ //  if(to.name=="router1"){
+	//   // next({path:'/pages/router/router2/router2',query:{name:'hhyang'}});
+	//   next({name:'router2',params:{name:'hhyang'}})
+ //  }else{
+	//   next();
+ //  }
+  
+ next();
+  
 })
+// router.afterEach((to, from) => {
+// 	console.log(from)
+// 	console.log(to)
+// })
 
 //自定义tabbar引入结束
 

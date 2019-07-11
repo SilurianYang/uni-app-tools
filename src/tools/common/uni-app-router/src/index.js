@@ -19,39 +19,55 @@ class Router {
 		this.lastVim = null;
 
 	}
-	push(rule,next=true) {
-		const _from = util.resolveRule(this, {
-			path: '/' + this.lastVim.$mp.page.route
-		}, this.lastVim.$mp.query);
-		
-		const _to = util.normalizeParams(JSON.parse(JSON.stringify(rule)), this.routers);
-		
-		lifeMothods.resolveLife(this, _from, {
-			..._to.rule,
-			...route(),
-			query:util.parseQuery('query',_to.query,true).query
-		}, function() {
-
-			const cloneRule = util.normalizeParams(JSON.parse(JSON.stringify(rule)), this.routers);
+	/**动态的导航到一个新 URL 保留浏览历史
+	 * navigateTo
+	 * @param {Object} rule
+	 */
+	push(rule) {
+		lifeMothods.resolveParams(this,rule,'push',function(customRule){
 			uni[this.methods['push']]({
-				url: `${cloneRule.url}?${cloneRule.query}`
+				url: `${customRule.url}?${customRule.query}`
 			})
-
+			
 		});
-
-
 	}
-	replace() {
-
+	/**动态的导航到一个新 URL 关闭当前页面，跳转到的某个页面。
+	 * redirectTo
+	 * @param {Object} rule
+	 */
+	replace(rule) {
+		lifeMothods.resolveParams(this,rule,'replace',function(customRule){
+			uni[this.methods['replace']]({
+				url: `${customRule.url}?${customRule.query}`
+			})
+			
+		});
 	}
-	replaceAll() {
-
+	/**动态的导航到一个新 URL 关闭所有页面，打开到应用内的某个页面
+	 * 	reLaunch
+	 * @param {Object} rule
+	 */
+	replaceAll(rule) {
+		lifeMothods.resolveParams(this,rule,'replaceAll',function(customRule){
+			uni[this.methods['replaceAll']]({
+				url: `${customRule.url}?${customRule.query}`
+			})
+			
+		});
 	}
-	pushTab() {
-
+	pushTab(rule) {
+		this.replaceAll(rule);
 	}
-	back() {
-
+	/**
+	 * 返回到指定层级页面上
+	 */
+	back(delta=1) {
+		if(delta.constructor!=Number){
+			return console.error('返回层级参数必须是一个Number类型且必须大于1：'+delta)
+		}
+		uni.navigateBack({
+			delta
+		});
 	}
 	getQuery(Vim) {
 		return util.resolveRule(this, {
@@ -60,6 +76,9 @@ class Router {
 	}
 	beforeEach(fn) {
 		return lifeMothods.registerHook(this.lifeCycle.beforeHooks, fn);
+	}
+	afterEach(fn){
+		return lifeMothods.registerHook(this.lifeCycle.afterHooks, fn);
 	}
 }
 Router.$root = null;

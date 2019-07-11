@@ -75,8 +75,12 @@
 				}
 			}
 		}
-	    ,{
-            "path" : "pages/router/router",
+        ,{
+            "path" : "pages/router/router2/router2",
+            "style" : {}
+        }
+        ,{
+            "path" : "pages/router/router1/router1",
             "style" : {}
         }
     ],
