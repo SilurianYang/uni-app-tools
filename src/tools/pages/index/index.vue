@@ -10,8 +10,6 @@
 			<button type="primary" @click="gotoPage('../customEvent/customEvent')">自定义事件</button>
 			<button type="warn" @click="gotoPage('../chat/chat')">聊天测试</button>
 			
-			<button type="warn" @click="gotoPageTest('../router/router')">路由测试</button>
-			
 			<!-- #ifdef APP-PLUS -->
 			<button type="warn" @click="gotoPage('../tabbar/tabbar')">自定义原生tabbar</button>
 			<!-- #endif -->
@@ -69,7 +67,7 @@
 				});
 			},
 			gotoPageTest(url){
-				this.$Router.replaceAll({name:'router1',params:{id:666}});
+				//this.$Router.replaceAll({name:'router1',params:{id:666}});
 				//this.$Router.push({name:'router1'});
 				//this.$Router.push({path:'/pages/router/router1/router1',query:{id:9999}});
 				//this.$Router.push('/pages/router/router1/router1');

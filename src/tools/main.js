@@ -61,53 +61,6 @@ Vue.prototype.$draw=draw;
 //自定义tabbar引入结束
 
 
-//自定义router引入
-import Router from './common/uni-app-router/src/index.js';
-Vue.use(Router);
-const router=new Router({
-	routes:[
-		{
-			path:'/pages/router/router1/router1',
-			name:'router1',
-		},
-		{
-			path:'/pages/index/index',
-			name:'index',
-		},{
-			path:'/pages/router/router2/router2',
-			name:'router2',
-			beforeEnter:(to, from, next)=>{
-				console.log(from)
-				console.log(to)
-				next();
-			}
-		}
-	]
-});
-router.beforeEach((to, from, next) => {
-	
-	// console.log(from)
- //    console.log(to)
- //  
- //  if(to.name=="router1"){
-	//   // next({path:'/pages/router/router2/router2',query:{name:'hhyang'}});
-	//   next({name:'router2',params:{name:'hhyang'}})
- //  }else{
-	//   next();
- //  }
-  
- next();
-  
-})
-// router.afterEach((to, from) => {
-// 	console.log(from)
-// 	console.log(to)
-// })
-
-//自定义tabbar引入结束
-
-
-
 
 Vue.prototype.$req = df;
 Vue.prototype.$rup = rup;
@@ -118,7 +71,6 @@ App.mpType = 'app'
 const app = new Vue({
 	...App,
 	store,
-	router
 })
 app.$mount()
 
