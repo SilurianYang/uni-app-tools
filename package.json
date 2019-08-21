@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "weex-ui": "^0.6.14"
+    "weex-ui": "^0.6.16"
   },
   "devDependencies": {},
   "scripts": {

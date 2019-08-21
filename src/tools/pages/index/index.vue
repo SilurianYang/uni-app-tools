@@ -136,8 +136,11 @@
 							name: 'hhyang'
 						},
 						abortFun: (info, bt) => {
-							bt.abort();
+							//bt.abort();
 						},
+						finishFun:(info)=>{
+							console.log(info)
+						}
 					}, {
 						parmas1: '我是额外参数1',
 						parmas2: '我是额外参数2'

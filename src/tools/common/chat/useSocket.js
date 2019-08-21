@@ -2,7 +2,7 @@ import Vue from 'vue'
 import socket from "./socket.js"; //引入socket.js 重要
 import store from "@/common/chat/store.js";
 const Socket = new socket({
-	url: 'ws://192.168.0.29:9999/', //连接地址 必填
+	url: 'ws://192.168.137.1:9999/', //连接地址 必填
 	maxInterValCount: 5,
 	interValTime: 2000,
 	onOpen (res) {

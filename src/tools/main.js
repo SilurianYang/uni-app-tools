@@ -24,13 +24,13 @@ df.defaultReq.beforeSend=async res=>{
 	// delete res.data
 	return res;
 }
-df.defaultReq.beforeFinsh = (res, status) => {
+df.defaultReq.beforeFinish = (res, status) => {
 	if (!res.data.success) { //退出登录
 		uni.reLaunch({
 			url: 'login?userOut=true'
 		});
 	}
-	return res
+	return null
 }
 
 
@@ -44,7 +44,7 @@ rup.defaultUp.baseData = { //设置公共参数，默认为空，设置此参数
 }
 
 //聊天测试
-//import'./common/chat/useSocket.js';
+// import'./common/chat/useSocket.js';
 import store from "./common/chat/store.js";
 Vue.prototype.$store = store;
 //聊天测试结束
