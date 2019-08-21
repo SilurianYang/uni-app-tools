@@ -15,7 +15,7 @@ let _defaultReq = {
 	dataType: 'json',
 	responseType: 'text',
 	beforeSend:r=>r,
-	beforeFinsh: r=> r
+	beforeFinish: r=> r
 }
 let _defaultUp = {
 	url: '', //独立的url 
@@ -79,7 +79,8 @@ class Request {
 		type = this.defaultReq.type, //请求类型 默认为'GET'
 		dataType = this.defaultReq.dataType, //返回数据类型，默认为json。会对返回数据做一个JSON.parse
 		responseType = this.defaultReq.responseType, //设置响应的数据类型默认为'text'
-		abortFun = _bt => {}
+		abortFun = _bt => {},
+		finishFun=()=>{}
 	} = {}, ...extra) {
 		return new Promise(async (resolve, reject) => {
 			if (!this.defaultReq.isreq) {
@@ -118,10 +119,13 @@ class Request {
 					let callData = Object.assign({
 						extra
 					}, finsh,{statusCode});
+					let verifyRes=null;
 					if (statusCode == 200) {
-						let verifyRes =await this.defaultReq.beforeFinsh(callData);
-						if(verifyRes){
+						 verifyRes=await this.defaultReq.beforeFinish(callData);
+						if(verifyRes!==undefined){
 							resolve(verifyRes);
+						}else{
+							reject('beforeFinish 钩子必须要有返回结果')
 						}
 					}else{
 						reject(callData)
@@ -129,6 +133,7 @@ class Request {
 					if (title) {
 						uni.hideLoading();
 					}
+					finishFun(verifyRes);
 				}
 			});
 			abortFun(beforeInfo,requestTask);
