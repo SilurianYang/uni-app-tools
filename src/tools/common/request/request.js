@@ -15,7 +15,8 @@ let _defaultReq = {
 	dataType: 'json',
 	responseType: 'text',
 	beforeSend:r=>r,
-	beforeFinish: r=> r
+	beforeFinish: r=> r,
+	errorHandler:(errInfo,reject)=>{},
 }
 let _defaultUp = {
 	url: '', //独立的url 
@@ -83,26 +84,27 @@ class Request {
 		finishFun=()=>{}
 	} = {}, ...extra) {
 		return new Promise(async (resolve, reject) => {
-			if (!this.defaultReq.isreq) {
-				return reject('要想使用ajax，请开放isreq 设置为true');
+			const reqConfig=this.defaultReq;
+			if (!reqConfig.isreq) {
+				return reqConfig.errorHandler({status:10001,errText:'要想使用ajax，请开放isreq 设置为true'},reject);
 			}
-			Object.assign(data, this.defaultReq.baseData); //合并参数
+			Object.assign(data, reqConfig.baseData); //合并参数
 			if (typeof header === 'string') { //如果用户只想设置content-type
 				header = {
 					'content-type': header
 				};
 			}
 			let beforeInfo={
-				url: this.defaultReq.url + path,
+				url: reqConfig.url + path,
 				method: type,
 				dataType,
 				responseType,
 				data,
 				header,
 			}
-			let verifyBeforeInfo =await this.defaultReq.beforeSend(beforeInfo);		//用户自定义后的请求参数
+			let verifyBeforeInfo =await reqConfig.beforeSend(beforeInfo);		//用户自定义后的请求参数
 			if(!verifyBeforeInfo){
-				return reject( Object.assign(beforeInfo,{beforeClose:true}));
+				return reqConfig.errorHandler({status:10002,errText:Object.assign(beforeInfo,{beforeClose:true})},reject);
 			}
 			if (title) { //显示请求提示
 				uni.showLoading({
@@ -121,14 +123,14 @@ class Request {
 					}, finsh,{statusCode});
 					let verifyRes=null;
 					if (statusCode == 200) {
-						 verifyRes=await this.defaultReq.beforeFinish(callData);
-						if(verifyRes!==undefined){
+						 verifyRes=await reqConfig.beforeFinish(callData);
+						if(verifyRes!=null){
 							resolve(verifyRes);
 						}else{
-							reject('beforeFinish 钩子必须要有返回结果')
+							reqConfig.errorHandler({status:10003,errText:'beforeFinish 钩子必须要有返回结果'},reject);
 						}
 					}else{
-						reject(callData)
+						reqConfig.errorHandler({status:10004,errText:callData},reject);
 					}
 					if (title) {
 						uni.hideLoading();

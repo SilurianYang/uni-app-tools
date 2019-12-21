@@ -19,7 +19,7 @@ let timeout=function(){
 	})
 }
 
-df.defaultReq.beforeSend=async res=>{
+df.defaultReq.beforeSend=res=>{
 	// await timeout();
 	// delete res.data
 	return res;
@@ -31,6 +31,11 @@ df.defaultReq.beforeFinish = (res, status) => {
 		});
 	}
 	return null
+}
+
+df.defaultReq.errorHandler=(err,reject)=>{
+	console.log(err)
+	reject(err);
 }
 
 
