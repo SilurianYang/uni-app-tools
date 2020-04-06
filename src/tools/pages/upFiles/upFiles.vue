@@ -41,6 +41,7 @@
 					const res = await this.$rup.selectFiles({
 						type,
 						maximum: 2,
+						sourceType:['camera'],
 						upload: {
 							path: 'example/upload',
 							files: ['image'],

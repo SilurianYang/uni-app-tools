@@ -28,11 +28,6 @@
 			uni.stopPullDownRefresh();
 		},
 		onLoad() {
-			
-			
-			console.log(this);
-			console.log(this.$Route)
-			
 			this.$event.on('test', (title) => {
 				uni.showToast({
 					title,

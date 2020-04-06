@@ -160,7 +160,7 @@ class UpFiles extends RQ {
 				multiple,
 				...extra,
 			}
-			const res = await this.FunChunk[this.platform](merge);
+			const res = await this.FunChunk[this.platform].call(this,merge);
 			if(!isUp){
 				return resolve(res);
 			}
@@ -174,9 +174,13 @@ class UpFiles extends RQ {
 	}
 	/**
 	 * App选择文件
+	 * 修复 https://github.com/SilurianYang/uni-simple-router/issues/103
 	 */
 	AppSelectFiles(queryInfo) {
 		return new Promise(async (resolve, reject) => {
+			if(queryInfo.sourceType.toString()==='camera'){		//如果是拍照选择调用uni-app的api
+				return resolve(this.otherSelectFiles(queryInfo));
+			}
 			plus.gallery.pick(path => {
 				resolve(path.files);
 			}, err => {
